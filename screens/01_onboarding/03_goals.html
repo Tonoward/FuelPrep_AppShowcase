@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Fuel — Tus Objetivos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { electric: '#14ff69', sage: '#749a76', frost: '#f1fcf1', forest: '#131e13' },
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(ellipse 160% 55% at 50% -5%, #1a2e1c 0%, #060d06 65%);
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 40px 16px;
+    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .phone-frame {
+      width: 390px; height: 844px; background: #131e13;
+      border-radius: 50px; overflow: hidden; position: relative; flex-shrink: 0;
+      box-shadow: 0 0 0 1.5px rgba(116,154,118,0.18), 0 50px 120px rgba(0,0,0,0.85),
+        0 0 120px rgba(20,255,105,0.07), inset 0 1px 0 rgba(255,255,255,0.04);
+      animation: fadeUp 0.45s ease-out;
+    }
+    .dynamic-island { position: absolute; left: 50%; transform: translateX(-50%); top: 11px; width: 126px; height: 37px; background: #000; border-radius: 20px; z-index: 20; }
+    .status-bar { height: 54px; padding: 14px 28px 0; display: flex; justify-content: space-between; align-items: flex-start; }
+    .phone-body { height: calc(844px - 54px); padding: 0 30px 44px; display: flex; flex-direction: column; overflow-y: auto; scrollbar-width: none; }
+    .phone-body::-webkit-scrollbar { display: none; }
+    .fuel-btn {
+      width: 100%; background: #14ff69; color: #131e13;
+      font-size: 16px; font-weight: 700; padding: 17px; border-radius: 999px;
+      border: none; cursor: pointer; font-family: 'Inter', sans-serif; letter-spacing: -0.2px;
+      transition: opacity 0.15s, transform 0.1s; box-shadow: 0 0 30px rgba(20,255,105,0.25);
+      flex-shrink: 0;
+    }
+    .fuel-btn:hover { opacity: 0.88; }
+    .fuel-btn:active { transform: scale(0.98); }
+    .fuel-btn-ghost {
+      width: 100%; background: transparent; color: #749a76;
+      font-size: 14px; font-weight: 500; padding: 14px; border-radius: 999px;
+      border: 1.5px solid rgba(116,154,118,0.22); cursor: pointer; font-family: 'Inter', sans-serif;
+      margin-top: 10px; transition: border-color 0.2s, color 0.2s; flex-shrink: 0;
+    }
+    .fuel-btn-ghost:hover { border-color: rgba(116,154,118,0.45); color: #f1fcf1; }
+    .page-label { color: rgba(116,154,118,0.28); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 20px; }
+    #char-counter { color: rgba(116,154,118,0.4); font-size: 12px; text-align: right; margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+  <!-- Page nav -->
+  <div style="width:390px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+    <a href="02_fitness_info.html" style="color:rgba(116,154,118,0.45);font-size:13px;text-decoration:none;" onmouseover="this.style.color='#749a76'" onmouseout="this.style.color='rgba(116,154,118,0.45)'">← Anterior</a>
+    <span style="color:rgba(116,154,118,0.32);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;">1.3 · Objetivos</span>
+    <a href="04_advanced_input.html" style="color:rgba(20,255,105,0.6);font-size:13px;text-decoration:none;" onmouseover="this.style.color='#14ff69'" onmouseout="this.style.color='rgba(20,255,105,0.6)'">Siguiente →</a>
+  </div>
+
+  <!-- Phone frame -->
+  <div class="phone-frame">
+    <div class="dynamic-island"></div>
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span style="color:rgba(241,252,241,0.72);font-size:13px;font-weight:600;">9:41</span>
+      <div style="display:flex;align-items:center;gap:5px;">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="rgba(241,252,241,0.72)">
+          <rect x="0" y="7.5" width="3" height="3.5" rx="0.5"/>
+          <rect x="4.5" y="5" width="3" height="6" rx="0.5"/>
+          <rect x="9" y="2.5" width="3" height="8.5" rx="0.5"/>
+          <rect x="13.5" y="0" width="3" height="11" rx="0.5" opacity="0.3"/>
+        </svg>
+        <svg width="15" height="12" viewBox="0 0 16 12" fill="rgba(241,252,241,0.72)">
+          <path d="M8 1.5C5.5 1.5 3.3 2.4 1.7 3.9L0.2 2.4C2.2 0.9 4.9 0 8 0s5.8.9 7.8 2.4L14.3 3.9C12.7 2.4 10.5 1.5 8 1.5z"/>
+          <path d="M8 5.5a5 5 0 00-3.5 1.4L3 5.3A7 7 0 018 3.5a7 7 0 015 1.8l-1.5 1.6A5 5 0 008 5.5z"/>
+          <circle cx="8" cy="10.5" r="1.5"/>
+        </svg>
+        <div style="width:25px;height:12px;border:1.5px solid rgba(241,252,241,0.65);border-radius:3px;padding:1.5px;position:relative;display:flex;align-items:center;">
+          <div style="width:75%;height:100%;background:rgba(241,252,241,0.65);border-radius:1.5px;"></div>
+          <div style="position:absolute;right:-4px;top:3px;width:3px;height:6px;background:rgba(241,252,241,0.65);border-radius:0 2px 2px 0;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone body -->
+    <div class="phone-body">
+
+      <!-- Logo -->
+      <div style="display:flex;justify-content:center;margin-top:22px;margin-bottom:22px;">
+        <div style="display:flex;align-items:center;gap:9px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#14ff69">
+            <path d="M13 2L3.5 13.5H9.5L8 22L20.5 10.5H14.5L13 2Z"/>
+          </svg>
+          <span style="color:#f1fcf1;font-size:22px;font-weight:800;letter-spacing:-0.3px;">Fuel</span>
+        </div>
+      </div>
+
+      <!-- Step dots -->
+      <div style="display:flex;justify-content:center;gap:8px;margin-bottom:24px;">
+        <div style="width:8px;height:8px;background:#14ff69;border-radius:999px;opacity:0.45;"></div>
+        <div style="width:8px;height:8px;background:#14ff69;border-radius:999px;opacity:0.45;"></div>
+        <div style="width:24px;height:8px;background:#14ff69;border-radius:999px;box-shadow:0 0 8px rgba(20,255,105,0.55);"></div>
+        <div style="width:8px;height:8px;background:rgba(116,154,118,0.25);border-radius:999px;"></div>
+        <div style="width:8px;height:8px;background:rgba(116,154,118,0.25);border-radius:999px;"></div>
+      </div>
+
+      <!-- Header row: title + skip -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <div>
+          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(116,154,118,0.12);border-radius:999px;padding:3px 10px;margin-bottom:8px;">
+            <span style="color:#749a76;font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;">Opcional</span>
+          </div>
+          <h1 style="color:#f1fcf1;font-size:22px;font-weight:800;line-height:1.2;margin:0;">Cuéntanos sobre<br/>tus objetivos</h1>
+        </div>
+        <a href="04_advanced_input.html" style="color:rgba(116,154,118,0.55);font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap;margin-top:6px;flex-shrink:0;" onmouseover="this.style.color='#749a76'" onmouseout="this.style.color='rgba(116,154,118,0.55)'">Omitir →</a>
+      </div>
+
+      <!-- Subtext -->
+      <p style="color:#749a76;font-size:13px;line-height:1.65;margin:0 0 18px;">Nuestra IA traducirá tus palabras en un plan de macros personalizado para ti.</p>
+
+      <!-- Textarea -->
+      <div style="position:relative;">
+        <textarea
+          id="goals-textarea"
+          maxlength="500"
+          oninput="updateCounter()"
+          onfocus="this.style.borderColor='#14ff69';this.style.background='rgba(20,255,105,0.03)';this.style.boxShadow='0 0 0 4px rgba(20,255,105,0.07)'"
+          onblur="this.style.borderColor='rgba(116,154,118,0.28)';this.style.background='rgba(116,154,118,0.06)';this.style.boxShadow='none'"
+          placeholder="Ej: Quiero estar más definido y ganar algo de músculo. No hago mucho ejercicio actualmente, pero quiero mantenerme en 3 días de entrenamiento de fuerza por semana..."
+          style="width:100%;height:165px;background:rgba(116,154,118,0.06);border:1.5px solid rgba(116,154,118,0.28);border-radius:18px;padding:16px 18px;color:#f1fcf1;font-size:14px;font-family:Inter,sans-serif;outline:none;resize:none;line-height:1.7;transition:border-color 0.2s,background 0.2s,box-shadow 0.2s;"
+        ></textarea>
+        <span style="position:absolute;right:14px;bottom:14px;color:rgba(116,154,118,0.35);font-size:11.5px;" id="char-counter">0 / 500</span>
+      </div>
+
+      <!-- AI note -->
+      <div style="display:flex;align-items:center;gap:8px;margin-top:12px;padding:10px 14px;background:rgba(20,255,105,0.06);border-radius:12px;border:1px solid rgba(20,255,105,0.12);">
+        <!-- Sparkle icon -->
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#14ff69" style="flex-shrink:0;">
+          <path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5L12 2zm6 12l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9.9-2.1zM4 16l.7 1.3 1.3.7-1.3.7L4 20l-.7-1.3L2 18l1.3-.7L4 16z"/>
+        </svg>
+        <p style="color:rgba(20,255,105,0.75);font-size:12.5px;margin:0;line-height:1.5;">La IA analizará esto para completar tu plan nutricional</p>
+      </div>
+
+      <!-- Spacer -->
+      <div style="flex:1;min-height:12px;"></div>
+
+      <!-- Primary button -->
+      <button class="fuel-btn" onclick="window.location.href='04_advanced_input.html'">
+        ✦ Analizar y Continuar
+      </button>
+
+      <!-- Ghost skip button -->
+      <button class="fuel-btn-ghost" onclick="window.location.href='04_advanced_input.html'">
+        Omitir — completar manualmente
+      </button>
+
+    </div>
+  </div>
+
+  <p class="page-label">FASE 1 · ONBOARDING · 1.3 – OBJETIVOS</p>
+
+  <script>
+    function updateCounter() {
+      const ta = document.getElementById('goals-textarea');
+      document.getElementById('char-counter').textContent = ta.value.length + ' / 500';
+    }
+  </script>
+
+</body>
+</html>

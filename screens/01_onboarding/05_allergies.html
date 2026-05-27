@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Fuel — Alergias</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { electric: '#14ff69', sage: '#749a76', frost: '#f1fcf1', forest: '#131e13' },
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(ellipse 160% 55% at 50% -5%, #1a2e1c 0%, #060d06 65%);
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 40px 16px;
+    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .phone-frame {
+      width: 390px; height: 844px; background: #131e13;
+      border-radius: 50px; overflow: hidden; position: relative; flex-shrink: 0;
+      box-shadow: 0 0 0 1.5px rgba(116,154,118,0.18), 0 50px 120px rgba(0,0,0,0.85),
+        0 0 120px rgba(20,255,105,0.07), inset 0 1px 0 rgba(255,255,255,0.04);
+      animation: fadeUp 0.45s ease-out;
+    }
+    .dynamic-island { position: absolute; left: 50%; transform: translateX(-50%); top: 11px; width: 126px; height: 37px; background: #000; border-radius: 20px; z-index: 20; }
+    .status-bar { height: 54px; padding: 14px 28px 0; display: flex; justify-content: space-between; align-items: flex-start; }
+    .phone-body { height: calc(844px - 54px); padding: 0 28px 40px; display: flex; flex-direction: column; overflow-y: auto; scrollbar-width: none; }
+    .phone-body::-webkit-scrollbar { display: none; }
+    .fuel-btn-cta {
+      width: 100%; background: #14ff69; color: #131e13;
+      font-size: 17px; font-weight: 800; padding: 18px; border-radius: 999px;
+      border: none; cursor: pointer; font-family: 'Inter', sans-serif;
+      transition: opacity 0.15s, transform 0.1s;
+      box-shadow: 0 0 40px rgba(20,255,105,0.3), 0 8px 24px rgba(20,255,105,0.2);
+      flex-shrink: 0; letter-spacing: -0.2px;
+    }
+    .fuel-btn-cta:hover { opacity: 0.88; }
+    .fuel-btn-cta:active { transform: scale(0.98); }
+    .form-label { display: block; color: #749a76; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 8px; }
+    .allergen-pill {
+      display: flex; align-items: center; gap: 8px;
+      padding: 11px 14px; border-radius: 14px;
+      border: 1.5px solid rgba(116,154,118,0.25);
+      background: rgba(116,154,118,0.06);
+      color: #749a76; font-size: 13.5px; font-weight: 500;
+      cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; user-select: none;
+    }
+    .allergen-pill.selected {
+      background: rgba(20,255,105,0.1); border-color: #14ff69; color: #f1fcf1;
+    }
+    .allergen-pill.selected .check { opacity: 1; }
+    .allergen-pill:not(.selected):hover { border-color: rgba(116,154,118,0.45); color: #f1fcf1; }
+    .check { opacity: 0; transition: opacity 0.15s; margin-left: auto; flex-shrink: 0; }
+    .page-label { color: rgba(116,154,118,0.28); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <!-- Page nav -->
+  <div style="width:390px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+    <a href="04b_subscription.html" style="color:rgba(116,154,118,0.45);font-size:13px;text-decoration:none;" onmouseover="this.style.color='#749a76'" onmouseout="this.style.color='rgba(116,154,118,0.45)'">← Anterior</a>
+    <span style="color:rgba(116,154,118,0.32);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;">1.5 · Alergias</span>
+    <span style="color:rgba(116,154,118,0.25);font-size:13px;">Último paso</span>
+  </div>
+
+  <!-- Phone frame -->
+  <div class="phone-frame">
+    <div class="dynamic-island"></div>
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span style="color:rgba(241,252,241,0.72);font-size:13px;font-weight:600;">9:41</span>
+      <div style="display:flex;align-items:center;gap:5px;">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="rgba(241,252,241,0.72)">
+          <rect x="0" y="7.5" width="3" height="3.5" rx="0.5"/>
+          <rect x="4.5" y="5" width="3" height="6" rx="0.5"/>
+          <rect x="9" y="2.5" width="3" height="8.5" rx="0.5"/>
+          <rect x="13.5" y="0" width="3" height="11" rx="0.5" opacity="0.3"/>
+        </svg>
+        <svg width="15" height="12" viewBox="0 0 16 12" fill="rgba(241,252,241,0.72)">
+          <path d="M8 1.5C5.5 1.5 3.3 2.4 1.7 3.9L0.2 2.4C2.2 0.9 4.9 0 8 0s5.8.9 7.8 2.4L14.3 3.9C12.7 2.4 10.5 1.5 8 1.5z"/>
+          <path d="M8 5.5a5 5 0 00-3.5 1.4L3 5.3A7 7 0 018 3.5a7 7 0 015 1.8l-1.5 1.6A5 5 0 008 5.5z"/>
+          <circle cx="8" cy="10.5" r="1.5"/>
+        </svg>
+        <div style="width:25px;height:12px;border:1.5px solid rgba(241,252,241,0.65);border-radius:3px;padding:1.5px;position:relative;display:flex;align-items:center;">
+          <div style="width:75%;height:100%;background:rgba(241,252,241,0.65);border-radius:1.5px;"></div>
+          <div style="position:absolute;right:-4px;top:3px;width:3px;height:6px;background:rgba(241,252,241,0.65);border-radius:0 2px 2px 0;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone body -->
+    <div class="phone-body">
+
+      <!-- Logo -->
+      <div style="display:flex;justify-content:center;margin-top:20px;margin-bottom:18px;">
+        <div style="display:flex;align-items:center;gap:9px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#14ff69">
+            <path d="M13 2L3.5 13.5H9.5L8 22L20.5 10.5H14.5L13 2Z"/>
+          </svg>
+          <span style="color:#f1fcf1;font-size:21px;font-weight:800;letter-spacing:-0.3px;">Fuel</span>
+        </div>
+      </div>
+
+      <!-- Step dots -->
+      <div style="display:flex;justify-content:center;gap:8px;margin-bottom:20px;">
+        <div style="width:8px;height:8px;background:#14ff69;border-radius:999px;opacity:0.4;"></div>
+        <div style="width:8px;height:8px;background:#14ff69;border-radius:999px;opacity:0.4;"></div>
+        <div style="width:8px;height:8px;background:#14ff69;border-radius:999px;opacity:0.4;"></div>
+        <div style="width:8px;height:8px;background:#14ff69;border-radius:999px;opacity:0.4;"></div>
+        <div style="width:24px;height:8px;background:#14ff69;border-radius:999px;box-shadow:0 0 8px rgba(20,255,105,0.55);"></div>
+      </div>
+
+      <!-- Heading -->
+      <div style="margin-bottom:18px;">
+        <h1 style="color:#f1fcf1;font-size:22px;font-weight:800;line-height:1.2;margin:0 0 6px;">¿Tienes alergias<br/>alimentarias?</h1>
+        <p style="color:#749a76;font-size:13px;line-height:1.6;margin:0;">Selecciona todo lo que aplique. Lo tendremos en cuenta en cada comida.</p>
+      </div>
+
+      <!-- Allergen grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px;">
+        <button class="allergen-pill" onclick="toggleAllergen(this)">
+          <span>🌾</span> <span>Gluten</span>
+          <svg class="check" width="14" height="14" viewBox="0 0 20 20" fill="#14ff69"><path d="M7 13.4L3.6 10 2.4 11.2 7 15.8 17.6 5.2 16.4 4 7 13.4z"/></svg>
+        </button>
+        <button class="allergen-pill" onclick="toggleAllergen(this)">
+          <span>🥛</span> <span>Lácteos</span>
+          <svg class="check" width="14" height="14" viewBox="0 0 20 20" fill="#14ff69"><path d="M7 13.4L3.6 10 2.4 11.2 7 15.8 17.6 5.2 16.4 4 7 13.4z"/></svg>
+        </button>
+        <button class="allergen-pill" onclick="toggleAllergen(this)">
+          <span>🥜</span> <span>Frutos secos</span>
+          <svg class="check" width="14" height="14" viewBox="0 0 20 20" fill="#14ff69"><path d="M7 13.4L3.6 10 2.4 11.2 7 15.8 17.6 5.2 16.4 4 7 13.4z"/></svg>
+        </button>
+        <button class="allergen-pill" onclick="toggleAllergen(this)">
+          <span>🥚</span> <span>Huevos</span>
+          <svg class="check" width="14" height="14" viewBox="0 0 20 20" fill="#14ff69"><path d="M7 13.4L3.6 10 2.4 11.2 7 15.8 17.6 5.2 16.4 4 7 13.4z"/></svg>
+        </button>
+        <button class="allergen-pill" onclick="toggleAllergen(this)">
+          <span>🦐</span> <span>Mariscos</span>
+          <svg class="check" width="14" height="14" viewBox="0 0 20 20" fill="#14ff69"><path d="M7 13.4L3.6 10 2.4 11.2 7 15.8 17.6 5.2 16.4 4 7 13.4z"/></svg>
+        </button>
+        <button class="allergen-pill" onclick="toggleAllergen(this)">
+          <span>🫘</span> <span>Soya</span>
+          <svg class="check" width="14" height="14" viewBox="0 0 20 20" fill="#14ff69"><path d="M7 13.4L3.6 10 2.4 11.2 7 15.8 17.6 5.2 16.4 4 7 13.4z"/></svg>
+        </button>
+        <button class="allergen-pill" onclick="toggleAllergen(this)">
+          <span>🐟</span> <span>Pescado</span>
+          <svg class="check" width="14" height="14" viewBox="0 0 20 20" fill="#14ff69"><path d="M7 13.4L3.6 10 2.4 11.2 7 15.8 17.6 5.2 16.4 4 7 13.4z"/></svg>
+        </button>
+        <button class="allergen-pill" onclick="toggleAllergen(this)">
+          <span>🌿</span> <span>Sésamo</span>
+          <svg class="check" width="14" height="14" viewBox="0 0 20 20" fill="#14ff69"><path d="M7 13.4L3.6 10 2.4 11.2 7 15.8 17.6 5.2 16.4 4 7 13.4z"/></svg>
+        </button>
+      </div>
+
+      <!-- Add custom allergen -->
+      <button
+        onclick="addCustomAllergen()"
+        style="width:100%;display:flex;align-items:center;gap:8px;padding:11px 14px;border-radius:14px;border:1.5px dashed rgba(116,154,118,0.28);background:transparent;color:#749a76;font-size:13.5px;font-weight:500;cursor:pointer;font-family:Inter,sans-serif;transition:border-color 0.2s,color 0.2s;margin-bottom:18px;"
+        onmouseover="this.style.borderColor='rgba(116,154,118,0.45)';this.style.color='#f1fcf1'"
+        onmouseout="this.style.borderColor='rgba(116,154,118,0.28)';this.style.color='#749a76'"
+      >
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 010 2h-5v5a1 1 0 01-2 0v-5H4a1 1 0 010-2h5V4a1 1 0 011-1z"/></svg>
+        Agregar otro alérgeno
+      </button>
+      <div id="custom-allergen-input" style="display:none;margin-bottom:14px;">
+        <input type="text" placeholder="Nombre del alérgeno..."
+          style="width:100%;background:rgba(116,154,118,0.07);border:1.5px solid rgba(116,154,118,0.28);border-radius:12px;padding:12px 16px;color:#f1fcf1;font-size:14px;font-family:Inter,sans-serif;outline:none;"
+          onfocus="this.style.borderColor='#14ff69'" onblur="this.style.borderColor='rgba(116,154,118,0.28)'"
+        />
+      </div>
+
+      <!-- Divider -->
+      <div style="height:1px;background:rgba(116,154,118,0.12);margin-bottom:16px;"></div>
+
+      <!-- Special requests -->
+      <div style="margin-bottom:14px;">
+        <label class="form-label">Solicitudes especiales de preparación</label>
+        <textarea
+          placeholder="Ej: Sin cebolla, extra picante, menos aceite, sin sal adicional..."
+          style="width:100%;height:82px;background:rgba(116,154,118,0.06);border:1.5px solid rgba(116,154,118,0.25);border-radius:14px;padding:13px 16px;color:#f1fcf1;font-size:13.5px;font-family:Inter,sans-serif;outline:none;resize:none;line-height:1.65;transition:border-color 0.2s,box-shadow 0.2s;"
+          onfocus="this.style.borderColor='#14ff69';this.style.boxShadow='0 0 0 4px rgba(20,255,105,0.07)'"
+          onblur="this.style.borderColor='rgba(116,154,118,0.25)';this.style.boxShadow='none'"
+        ></textarea>
+        <p style="color:rgba(116,154,118,0.38);font-size:11.5px;margin:6px 0 0 4px;line-height:1.5;">Nuestro equipo de cocina revisará esto en cada comida</p>
+      </div>
+
+      <!-- Spacer -->
+      <div style="flex:1;min-height:4px;"></div>
+
+      <!-- CTA button -->
+      <button class="fuel-btn-cta" onclick="alert('¡Bienvenido a Fuel! 🎉')">
+        ¡Vamos! ⚡
+      </button>
+
+    </div>
+  </div>
+
+  <p class="page-label">FASE 1 · ONBOARDING · 1.5 – ALERGIAS</p>
+
+  <script>
+    function toggleAllergen(el) {
+      el.classList.toggle('selected');
+    }
+    function addCustomAllergen() {
+      const el = document.getElementById('custom-allergen-input');
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+      if (el.style.display === 'block') el.querySelector('input').focus();
+    }
+  </script>
+
+</body>
+</html>

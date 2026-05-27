@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Fuel Admin — Cocina</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{electric:'#14ff69',sage:'#749a76',frost:'#f1fcf1',forest:'#131e13'},fontFamily:{sans:['Inter','sans-serif']}}}}</script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:#f1fcf1;margin:0;color:#131e13;}
+    .admin-card{background:#fff;border-radius:16px;border:1px solid rgba(19,30,19,0.07);box-shadow:0 1px 4px rgba(19,30,19,0.05);}
+    .section-title{color:#131e13;font-size:13px;font-weight:700;margin:0 0 16px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;border-left:2.5px solid transparent;text-decoration:none;cursor:pointer;transition:all 0.15s;color:#749a76;}
+    .nav-item:hover{background:rgba(116,154,118,0.1);color:#f1fcf1;}
+    .nav-item.active{border-left-color:#14ff69;background:rgba(20,255,105,0.08);color:#f1fcf1;}
+    .meal-tab{padding:8px 20px;border:none;background:transparent;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border-bottom:2.5px solid transparent;color:#749a76;transition:all 0.15s;}
+    .meal-tab.active{color:#131e13;border-bottom-color:#14ff69;}
+    .meal-tab:hover:not(.active){color:#131e13;}
+    .order-card{background:#fff;border-radius:14px;border:1px solid rgba(19,30,19,0.08);box-shadow:0 1px 3px rgba(19,30,19,0.05);padding:16px;transition:box-shadow 0.15s;}
+    .order-card:hover{box-shadow:0 4px 12px rgba(19,30,19,0.1);}
+    .status-badge-btn{display:inline-block;padding:4px 11px;border-radius:999px;font-size:11.5px;font-weight:700;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all 0.15s;}
+    .status-badge-btn:hover{opacity:0.8;}
+    .s-pending{background:rgba(116,154,118,0.12);color:#749a76;}
+    .s-prep{background:rgba(245,158,11,0.12);color:#d97706;}
+    .s-ready{background:rgba(20,255,105,0.15);color:#16a34a;}
+  </style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside style="width:220px;background:#131e13;position:fixed;top:0;bottom:38px;left:0;display:flex;flex-direction:column;z-index:20;border-right:1px solid rgba(116,154,118,0.1);">
+  <div style="padding:22px 20px 18px;border-bottom:1px solid rgba(116,154,118,0.1);">
+    <span style="color:#14ff69;font-size:20px;font-weight:800;">⚡</span>
+    <span style="color:#f1fcf1;font-size:16px;font-weight:800;margin-left:6px;">Fuel Admin</span>
+  </div>
+  <nav style="flex:1;padding:10px;display:flex;flex-direction:column;gap:1px;overflow-y:auto;">
+    <a class="nav-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span style="font-size:13.5px;font-weight:500;">Dashboard</span></a>
+    <a class="nav-item" href="01_add_menu.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span style="font-size:13.5px;font-weight:500;">Menús</span></a>
+    <a class="nav-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span style="font-size:13.5px;font-weight:500;">Pedidos</span></a>
+    <a class="nav-item active" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a7 7 0 017 7c0 4-3 6-3 9H8c0-3-3-5-3-9a7 7 0 017-7z"/><line x1="8" y1="22" x2="16" y2="22"/><line x1="9" y1="18" x2="15" y2="18"/></svg><span style="font-size:13.5px;font-weight:600;">Cocina</span></a>
+    <a class="nav-item" href="05_shopping_list.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2h12l1 5H5L6 2z"/><path d="M5 7l1 13h12l1-13"/><path d="M9 11v5M12 11v5M15 11v5"/></svg><span style="font-size:13.5px;font-weight:500;">Compras</span></a>
+    <a class="nav-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span style="font-size:13.5px;font-weight:500;">Entregas</span></a>
+    <a class="nav-item" href="02_analytics.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span style="font-size:13.5px;font-weight:500;">Analíticas</span></a>
+    <a class="nav-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><span style="font-size:13.5px;font-weight:500;">Ajustes</span></a>
+  </nav>
+  <div style="padding:14px;border-top:1px solid rgba(116,154,118,0.1);">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div style="width:34px;height:34px;background:#14ff69;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="color:#131e13;font-size:12px;font-weight:800;">MA</span></div>
+      <div><p style="color:#f1fcf1;font-size:12.5px;font-weight:700;margin:0;">Miguel Admin</p><p style="color:#749a76;font-size:11px;margin:2px 0 0;">Administrador</p></div>
+    </div>
+    <button style="width:100%;background:rgba(116,154,118,0.1);border:none;border-radius:8px;padding:7px;color:#749a76;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Cerrar sesión</button>
+  </div>
+</aside>
+
+<!-- ── TOP BAR ── -->
+<header style="position:fixed;top:0;left:220px;right:0;height:58px;background:#fff;border-bottom:1px solid rgba(19,30,19,0.08);padding:0 32px;display:flex;align-items:center;justify-content:space-between;z-index:10;box-shadow:0 1px 3px rgba(19,30,19,0.04);">
+  <div style="display:flex;align-items:center;gap:14px;">
+    <span style="color:#131e13;font-size:16px;font-weight:700;">Dashboard de Cocina</span>
+    <span style="background:rgba(20,255,105,0.12);color:#16a34a;font-size:12px;font-weight:700;padding:3px 12px;border-radius:999px;border:1px solid rgba(20,255,105,0.2);">● Servicio de Almuerzo</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:20px;">
+    <div style="text-align:right;">
+      <p id="livetime" style="font-size:18px;font-weight:800;color:#131e13;margin:0;letter-spacing:-0.02em;">09:42</p>
+      <p style="font-size:11px;color:#749a76;margin:0;">26 de Mayo, 2026</p>
+    </div>
+    <button style="display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;background:#14ff69;border:none;color:#131e13;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      Descargar listado
+    </button>
+  </div>
+</header>
+
+<!-- ── MAIN CONTENT ── -->
+<div style="margin-left:220px;padding:82px 32px 60px;">
+
+  <!-- Meal tabs + summary -->
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;">
+    <div>
+      <div style="display:flex;border-bottom:1.5px solid rgba(19,30,19,0.08);margin-bottom:18px;">
+        <button class="meal-tab" onclick="switchMeal(this,'desayuno')">Desayuno <span style="background:rgba(19,30,19,0.07);border-radius:999px;padding:1px 8px;font-size:11px;margin-left:4px;">12</span></button>
+        <button class="meal-tab active" onclick="switchMeal(this,'almuerzo')">Almuerzo <span style="background:rgba(20,255,105,0.15);color:#16a34a;border-radius:999px;padding:1px 8px;font-size:11px;margin-left:4px;font-weight:700;">34</span></button>
+        <button class="meal-tab" onclick="switchMeal(this,'cena')">Cena <span style="background:rgba(19,30,19,0.07);border-radius:999px;padding:1px 8px;font-size:11px;margin-left:4px;">8</span></button>
+      </div>
+      <p style="color:#749a76;font-size:13px;margin:0;">Mostrando 8 de 34 pedidos · Cierre: <strong style="color:#d97706;">12:00 PM</strong> (2h 18min)</p>
+    </div>
+    <!-- Status filter -->
+    <div style="display:flex;gap:8px;align-items:center;">
+      <span style="font-size:12px;color:#749a76;font-weight:600;">Filtrar:</span>
+      <button onclick="setFilter(this,'all')" class="filter-btn active-filter" style="padding:5px 12px;border-radius:999px;border:1.5px solid #131e13;background:#131e13;color:#f1fcf1;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Todos</button>
+      <button onclick="setFilter(this,'pending')" class="filter-btn" style="padding:5px 12px;border-radius:999px;border:1.5px solid rgba(19,30,19,0.15);background:transparent;color:#749a76;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Pendiente</button>
+      <button onclick="setFilter(this,'prep')" class="filter-btn" style="padding:5px 12px;border-radius:999px;border:1.5px solid rgba(19,30,19,0.15);background:transparent;color:#749a76;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">En preparación</button>
+      <button onclick="setFilter(this,'ready')" class="filter-btn" style="padding:5px 12px;border-radius:999px;border:1.5px solid rgba(19,30,19,0.15);background:transparent;color:#749a76;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Listo</button>
+    </div>
+  </div>
+
+  <!-- Progress summary row -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;">
+    <div style="background:#fff;border-radius:12px;border:1px solid rgba(19,30,19,0.07);padding:14px 18px;display:flex;align-items:center;gap:12px;">
+      <div style="width:36px;height:36px;background:rgba(116,154,118,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#749a76;flex-shrink:0;">14</div>
+      <div><p style="margin:0;font-size:13px;font-weight:700;color:#131e13;">Pendiente</p><p style="margin:2px 0 0;font-size:11.5px;color:#749a76;">En espera</p></div>
+    </div>
+    <div style="background:#fff;border-radius:12px;border:1px solid rgba(245,158,11,0.15);padding:14px 18px;display:flex;align-items:center;gap:12px;">
+      <div style="width:36px;height:36px;background:rgba(245,158,11,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#d97706;flex-shrink:0;">12</div>
+      <div><p style="margin:0;font-size:13px;font-weight:700;color:#131e13;">En preparación</p><p style="margin:2px 0 0;font-size:11.5px;color:#749a76;">Cocinando ahora</p></div>
+    </div>
+    <div style="background:#fff;border-radius:12px;border:1px solid rgba(20,255,105,0.15);padding:14px 18px;display:flex;align-items:center;gap:12px;">
+      <div style="width:36px;height:36px;background:rgba(20,255,105,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#16a34a;flex-shrink:0;">8</div>
+      <div><p style="margin:0;font-size:13px;font-weight:700;color:#131e13;">Listo</p><p style="margin:2px 0 0;font-size:11.5px;color:#749a76;">Esperando entrega</p></div>
+    </div>
+  </div>
+
+  <!-- ── ORDER CARDS GRID ── -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;" id="ordersGrid">
+
+    <!-- FUL-1042 Listo -->
+    <div class="order-card" data-status="ready" data-meal="almuerzo">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:800;color:#131e13;">#FUL-1042</span>
+        <button class="status-badge-btn s-ready" onclick="toggleStatus(this)">Listo</button>
+      </div>
+      <img src="../../assets/images/tazon-pollo.jpg" style="width:100%;height:90px;object-fit:cover;border-radius:10px;margin-bottom:10px;" alt="Tazón Proteico">
+      <p style="font-size:13.5px;font-weight:700;margin:0 0 2px;color:#131e13;">Tazón Proteico de Pollo</p>
+      <p style="font-size:12px;color:#749a76;margin:0 0 10px;">Carlos Mendoza</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;gap:5px;">
+          <span title="Sin gluten" style="font-size:14px;">🌾</span>
+          <span title="Sin lácteos" style="font-size:14px;">🥛</span>
+        </div>
+        <span style="font-size:11px;color:rgba(116,154,118,0.6);">08:55</span>
+      </div>
+      <div style="border-top:1px solid rgba(19,30,19,0.06);margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;align-items:center;">
+        <a href="04_order_detail.html" style="font-size:12px;color:#749a76;text-decoration:none;font-weight:600;" onmouseover="this.style.color='#131e13'" onmouseout="this.style.color='#749a76'">Ver detalle →</a>
+        <div style="width:8px;height:8px;background:#14ff69;border-radius:999px;box-shadow:0 0 6px rgba(20,255,105,0.5);"></div>
+      </div>
+    </div>
+
+    <!-- FUL-1043 En preparación -->
+    <div class="order-card" data-status="prep" data-meal="almuerzo">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:800;color:#131e13;">#FUL-1043</span>
+        <button class="status-badge-btn s-prep" onclick="toggleStatus(this)">En preparación</button>
+      </div>
+      <img src="../../assets/images/salmon-quinoa.jpg" style="width:100%;height:90px;object-fit:cover;border-radius:10px;margin-bottom:10px;" alt="Salmón con Quinoa">
+      <p style="font-size:13.5px;font-weight:700;margin:0 0 2px;color:#131e13;">Salmón con Quinoa Verde</p>
+      <p style="font-size:12px;color:#749a76;margin:0 0 10px;">Ana García</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;gap:5px;">
+          <span title="Sin nueces" style="font-size:14px;">🥜</span>
+        </div>
+        <span style="font-size:11px;color:rgba(116,154,118,0.6);">09:03</span>
+      </div>
+      <div style="border-top:1px solid rgba(19,30,19,0.06);margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;align-items:center;">
+        <a href="04_order_detail.html" style="font-size:12px;color:#749a76;text-decoration:none;font-weight:600;" onmouseover="this.style.color='#131e13'" onmouseout="this.style.color='#749a76'">Ver detalle →</a>
+        <div style="width:8px;height:8px;background:#f59e0b;border-radius:999px;box-shadow:0 0 6px rgba(245,158,11,0.4);"></div>
+      </div>
+    </div>
+
+    <!-- FUL-1044 En preparación -->
+    <div class="order-card" data-status="prep" data-meal="almuerzo">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:800;color:#131e13;">#FUL-1044</span>
+        <button class="status-badge-btn s-prep" onclick="toggleStatus(this)">En preparación</button>
+      </div>
+      <img src="../../assets/images/bowl-mediterraneo.jpg" style="width:100%;height:90px;object-fit:cover;border-radius:10px;margin-bottom:10px;" alt="Bowl Mediterráneo">
+      <p style="font-size:13.5px;font-weight:700;margin:0 0 2px;color:#131e13;">Bowl Mediterráneo</p>
+      <p style="font-size:12px;color:#749a76;margin:0 0 10px;">María Torres</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;gap:5px;">
+          <span style="font-size:13px;color:#749a76;font-weight:600;background:rgba(116,154,118,0.1);padding:2px 7px;border-radius:5px;">Extra espinaca</span>
+        </div>
+        <span style="font-size:11px;color:rgba(116,154,118,0.6);">09:08</span>
+      </div>
+      <div style="border-top:1px solid rgba(19,30,19,0.06);margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;align-items:center;">
+        <a href="04_order_detail.html" style="font-size:12px;color:#749a76;text-decoration:none;font-weight:600;" onmouseover="this.style.color='#131e13'" onmouseout="this.style.color='#749a76'">Ver detalle →</a>
+        <div style="width:8px;height:8px;background:#f59e0b;border-radius:999px;box-shadow:0 0 6px rgba(245,158,11,0.4);"></div>
+      </div>
+    </div>
+
+    <!-- FUL-1045 Listo -->
+    <div class="order-card" data-status="ready" data-meal="almuerzo">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:800;color:#131e13;">#FUL-1045</span>
+        <button class="status-badge-btn s-ready" onclick="toggleStatus(this)">Listo</button>
+      </div>
+      <img src="../../assets/images/pechuga-espinaca.jpg" style="width:100%;height:90px;object-fit:cover;border-radius:10px;margin-bottom:10px;" alt="Pechuga Rellena">
+      <p style="font-size:13.5px;font-weight:700;margin:0 0 2px;color:#131e13;">Pechuga Rellena de Espinaca</p>
+      <p style="font-size:12px;color:#749a76;margin:0 0 10px;">Luis Herrera</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;gap:5px;">
+          <span title="Sin gluten" style="font-size:14px;">🌾</span>
+        </div>
+        <span style="font-size:11px;color:rgba(116,154,118,0.6);">09:12</span>
+      </div>
+      <div style="border-top:1px solid rgba(19,30,19,0.06);margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;align-items:center;">
+        <a href="04_order_detail.html" style="font-size:12px;color:#749a76;text-decoration:none;font-weight:600;" onmouseover="this.style.color='#131e13'" onmouseout="this.style.color='#749a76'">Ver detalle →</a>
+        <div style="width:8px;height:8px;background:#14ff69;border-radius:999px;box-shadow:0 0 6px rgba(20,255,105,0.5);"></div>
+      </div>
+    </div>
+
+    <!-- FUL-1046 Pendiente -->
+    <div class="order-card" data-status="pending" data-meal="almuerzo">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:800;color:#131e13;">#FUL-1046</span>
+        <button class="status-badge-btn s-pending" onclick="toggleStatus(this)">Pendiente</button>
+      </div>
+      <img src="../../assets/images/tazon-pollo.jpg" style="width:100%;height:90px;object-fit:cover;border-radius:10px;margin-bottom:10px;opacity:0.8;" alt="Tazón Proteico">
+      <p style="font-size:13.5px;font-weight:700;margin:0 0 2px;color:#131e13;">Tazón Proteico de Pollo</p>
+      <p style="font-size:12px;color:#749a76;margin:0 0 10px;">Sofía Ruiz</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div></div>
+        <span style="font-size:11px;color:rgba(116,154,118,0.6);">09:24</span>
+      </div>
+      <div style="border-top:1px solid rgba(19,30,19,0.06);margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;align-items:center;">
+        <a href="04_order_detail.html" style="font-size:12px;color:#749a76;text-decoration:none;font-weight:600;" onmouseover="this.style.color='#131e13'" onmouseout="this.style.color='#749a76'">Ver detalle →</a>
+        <div style="width:8px;height:8px;background:rgba(116,154,118,0.4);border-radius:999px;"></div>
+      </div>
+    </div>
+
+    <!-- FUL-1047 En preparación -->
+    <div class="order-card" data-status="prep" data-meal="almuerzo">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:800;color:#131e13;">#FUL-1047</span>
+        <button class="status-badge-btn s-prep" onclick="toggleStatus(this)">En preparación</button>
+      </div>
+      <img src="../../assets/images/salmon-quinoa.jpg" style="width:100%;height:90px;object-fit:cover;border-radius:10px;margin-bottom:10px;" alt="Salmón con Quinoa">
+      <p style="font-size:13.5px;font-weight:700;margin:0 0 2px;color:#131e13;">Salmón con Quinoa Verde</p>
+      <p style="font-size:12px;color:#749a76;margin:0 0 10px;">Pedro Vega</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;gap:5px;">
+          <span title="Sin mariscos" style="font-size:14px;">🦐</span>
+        </div>
+        <span style="font-size:11px;color:rgba(116,154,118,0.6);">09:31</span>
+      </div>
+      <div style="border-top:1px solid rgba(19,30,19,0.06);margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;align-items:center;">
+        <a href="04_order_detail.html" style="font-size:12px;color:#749a76;text-decoration:none;font-weight:600;" onmouseover="this.style.color='#131e13'" onmouseout="this.style.color='#749a76'">Ver detalle →</a>
+        <div style="width:8px;height:8px;background:#f59e0b;border-radius:999px;box-shadow:0 0 6px rgba(245,158,11,0.4);"></div>
+      </div>
+    </div>
+
+    <!-- FUL-1048 Pendiente -->
+    <div class="order-card" data-status="pending" data-meal="almuerzo">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:800;color:#131e13;">#FUL-1048</span>
+        <button class="status-badge-btn s-pending" onclick="toggleStatus(this)">Pendiente</button>
+      </div>
+      <img src="../../assets/images/bowl-mediterraneo.jpg" style="width:100%;height:90px;object-fit:cover;border-radius:10px;margin-bottom:10px;opacity:0.8;" alt="Bowl Mediterráneo">
+      <p style="font-size:13.5px;font-weight:700;margin:0 0 2px;color:#131e13;">Bowl Mediterráneo</p>
+      <p style="font-size:12px;color:#749a76;margin:0 0 10px;">Jorge Díaz</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div></div>
+        <span style="font-size:11px;color:rgba(116,154,118,0.6);">09:35</span>
+      </div>
+      <div style="border-top:1px solid rgba(19,30,19,0.06);margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;align-items:center;">
+        <a href="04_order_detail.html" style="font-size:12px;color:#749a76;text-decoration:none;font-weight:600;" onmouseover="this.style.color='#131e13'" onmouseout="this.style.color='#749a76'">Ver detalle →</a>
+        <div style="width:8px;height:8px;background:rgba(116,154,118,0.4);border-radius:999px;"></div>
+      </div>
+    </div>
+
+    <!-- FUL-1049 En preparación -->
+    <div class="order-card" data-status="prep" data-meal="almuerzo">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:800;color:#131e13;">#FUL-1049</span>
+        <button class="status-badge-btn s-prep" onclick="toggleStatus(this)">En preparación</button>
+      </div>
+      <img src="../../assets/images/pechuga-espinaca.jpg" style="width:100%;height:90px;object-fit:cover;border-radius:10px;margin-bottom:10px;" alt="Pechuga Rellena">
+      <p style="font-size:13.5px;font-weight:700;margin:0 0 2px;color:#131e13;">Pechuga Rellena de Espinaca</p>
+      <p style="font-size:12px;color:#749a76;margin:0 0 10px;">Elena Mora</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;gap:5px;">
+          <span style="font-size:13px;color:#d97706;font-weight:600;background:rgba(245,158,11,0.1);padding:2px 7px;border-radius:5px;">Sin cebolla</span>
+        </div>
+        <span style="font-size:11px;color:rgba(116,154,118,0.6);">09:38</span>
+      </div>
+      <div style="border-top:1px solid rgba(19,30,19,0.06);margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;align-items:center;">
+        <a href="04_order_detail.html" style="font-size:12px;color:#749a76;text-decoration:none;font-weight:600;" onmouseover="this.style.color='#131e13'" onmouseout="this.style.color='#749a76'">Ver detalle →</a>
+        <div style="width:8px;height:8px;background:#f59e0b;border-radius:999px;box-shadow:0 0 6px rgba(245,158,11,0.4);"></div>
+      </div>
+    </div>
+
+  </div><!-- end grid -->
+
+</div><!-- end main -->
+
+<!-- ── DEV PAGE NAV ── -->
+<div style="position:fixed;bottom:0;left:0;right:0;height:38px;background:rgba(6,13,6,0.92);backdrop-filter:blur(10px);border-top:1px solid rgba(20,255,105,0.12);z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 32px;">
+  <a href="02_analytics.html" style="color:rgba(116,154,118,0.5);font-size:12.5px;text-decoration:none;" onmouseover="this.style.color='#749a76'" onmouseout="this.style.color='rgba(116,154,118,0.5)'">← Anterior</a>
+  <span style="color:rgba(116,154,118,0.3);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;">FASE 4 · ADMIN · 4.3 – COCINA</span>
+  <a href="04_order_detail.html" style="color:rgba(20,255,105,0.6);font-size:12.5px;text-decoration:none;" onmouseover="this.style.color='#14ff69'" onmouseout="this.style.color='rgba(20,255,105,0.6)'">Siguiente →</a>
+</div>
+
+<script>
+  // Live clock
+  function updateTime(){
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const el = document.getElementById('livetime');
+    if(el) el.textContent = h+':'+m;
+  }
+  updateTime();
+  setInterval(updateTime, 30000);
+
+  // Cycle status: Pendiente → En preparación → Listo → Pendiente
+  function toggleStatus(btn){
+    const states = [
+      {label:'Pendiente',cls:'s-pending'},
+      {label:'En preparación',cls:'s-prep'},
+      {label:'Listo',cls:'s-ready'}
+    ];
+    const cur = states.findIndex(s => btn.classList.contains(s.cls));
+    const next = (cur + 1) % states.length;
+    btn.classList.remove(states[cur].cls);
+    btn.classList.add(states[next].cls);
+    btn.textContent = states[next].label;
+    // Update dot
+    const card = btn.closest('.order-card');
+    const dot = card.querySelector('[style*="border-radius:999px"]');
+    if(dot){
+      const colors = {s_pending:'rgba(116,154,118,0.4)',s_prep:'#f59e0b',s_ready:'#14ff69'};
+      const clsKey = states[next].cls.replace('-','_');
+      dot.style.background = colors[clsKey] || 'rgba(116,154,118,0.4)';
+      dot.style.boxShadow = next===2 ? '0 0 6px rgba(20,255,105,0.5)' : next===1 ? '0 0 6px rgba(245,158,11,0.4)' : 'none';
+    }
+    card.setAttribute('data-status', next===0?'pending':next===1?'prep':'ready');
+  }
+
+  // Switch meal tab
+  function switchMeal(tab, meal){
+    document.querySelectorAll('.meal-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  }
+
+  // Filter buttons
+  function setFilter(btn, filter){
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.style.background='transparent';
+      b.style.borderColor='rgba(19,30,19,0.15)';
+      b.style.color='#749a76';
+    });
+    btn.style.background='#131e13';
+    btn.style.borderColor='#131e13';
+    btn.style.color='#f1fcf1';
+    const cards = document.querySelectorAll('.order-card');
+    cards.forEach(c => {
+      if(filter==='all'||c.dataset.status===filter){c.style.display='';}
+      else {c.style.display='none';}
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Fuel — Vista Semanal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { electric: '#14ff69', sage: '#749a76', frost: '#f1fcf1', forest: '#131e13' },
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(ellipse 160% 55% at 50% -5%, #1a2e1c 0%, #060d06 65%);
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 40px 16px;
+    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .phone-frame {
+      width: 390px; height: 844px; background: #131e13;
+      border-radius: 50px; overflow: hidden; position: relative; flex-shrink: 0;
+      box-shadow: 0 0 0 1.5px rgba(116,154,118,0.18), 0 50px 120px rgba(0,0,0,0.85),
+        0 0 120px rgba(20,255,105,0.07), inset 0 1px 0 rgba(255,255,255,0.04);
+      animation: fadeUp 0.45s ease-out;
+    }
+    .dynamic-island { position: absolute; left: 50%; transform: translateX(-50%); top: 11px; width: 126px; height: 37px; background: #000; border-radius: 20px; z-index: 20; }
+    .status-bar { height: 54px; padding: 14px 28px 0; display: flex; justify-content: space-between; align-items: flex-start; }
+    .phone-body { position: relative; height: 790px; overflow: hidden; }
+
+    /* View toggle */
+    .view-tab {
+      padding: 7px 20px; border-radius: 999px; font-size: 13px; font-weight: 600;
+      font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.15s; border: none;
+    }
+    .view-tab.active { background: #14ff69; color: #131e13; }
+    .view-tab:not(.active) { background: transparent; color: #749a76; }
+
+    /* Week strip days */
+    .week-day {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;
+    }
+    .week-day-label { font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-family: 'Inter', sans-serif; }
+    .week-day-num {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif;
+    }
+    .week-day-num.today { background: #14ff69; color: #131e13; }
+    .week-day-num.normal { color: #f1fcf1; }
+    .week-day-num.past { color: rgba(116,154,118,0.45); }
+    .week-dot-row { display: flex; gap: 3px; align-items: center; height: 8px; }
+
+    /* Meal card */
+    .meal-card {
+      display: flex; gap: 12px; align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(116,154,118,0.1);
+    }
+    .meal-card:last-child { border-bottom: none; }
+    .meal-thumb { width: 54px; height: 54px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
+
+    /* Day section header */
+    .day-section-hdr {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 0 6px;
+    }
+
+    /* Bottom nav */
+    .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 78px; background: #131e13; border-top: 1px solid rgba(116,154,118,0.12); display: flex; align-items: flex-start; padding-top: 10px; }
+    .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; }
+    .nav-tab .nav-lbl { font-size: 10px; font-weight: 600; font-family: 'Inter', sans-serif; }
+    .nav-tab.active .nav-lbl { color: #14ff69; }
+    .nav-tab:not(.active) .nav-lbl { color: rgba(116,154,118,0.5); }
+
+    .page-label { color: rgba(116,154,118,0.28); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <!-- Page nav -->
+  <div style="width:390px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+    <a href="01_monthly_calendar.html" style="color:rgba(116,154,118,0.45);font-size:13px;text-decoration:none;" onmouseover="this.style.color='#749a76'" onmouseout="this.style.color='rgba(116,154,118,0.45)'">← Anterior</a>
+    <span style="color:rgba(116,154,118,0.32);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;">3.2 · Vista Semanal</span>
+    <a href="../04_admin/01_dashboard.html" style="color:rgba(20,255,105,0.6);font-size:13px;text-decoration:none;" onmouseover="this.style.color='#14ff69'" onmouseout="this.style.color='rgba(20,255,105,0.6)'">Siguiente →</a>
+  </div>
+
+  <!-- Phone frame -->
+  <div class="phone-frame">
+    <div class="dynamic-island"></div>
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span style="color:rgba(241,252,241,0.72);font-size:13px;font-weight:600;">9:41</span>
+      <div style="display:flex;align-items:center;gap:5px;">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="rgba(241,252,241,0.72)">
+          <rect x="0" y="7.5" width="3" height="3.5" rx="0.5"/>
+          <rect x="4.5" y="5" width="3" height="6" rx="0.5"/>
+          <rect x="9" y="2.5" width="3" height="8.5" rx="0.5"/>
+          <rect x="13.5" y="0" width="3" height="11" rx="0.5" opacity="0.3"/>
+        </svg>
+        <svg width="15" height="12" viewBox="0 0 16 12" fill="rgba(241,252,241,0.72)">
+          <path d="M8 1.5C5.5 1.5 3.3 2.4 1.7 3.9L0.2 2.4C2.2 0.9 4.9 0 8 0s5.8.9 7.8 2.4L14.3 3.9C12.7 2.4 10.5 1.5 8 1.5z"/>
+          <path d="M8 5.5a5 5 0 00-3.5 1.4L3 5.3A7 7 0 018 3.5a7 7 0 015 1.8l-1.5 1.6A5 5 0 008 5.5z"/>
+          <circle cx="8" cy="10.5" r="1.5"/>
+        </svg>
+        <div style="width:25px;height:12px;border:1.5px solid rgba(241,252,241,0.72);border-radius:3px;padding:1.5px;display:flex;align-items:center;">
+          <div style="width:75%;height:100%;background:rgba(241,252,241,0.72);border-radius:1.5px;"></div>
+          <div style="position:absolute;right:-4px;top:3px;width:3px;height:6px;background:rgba(241,252,241,0.72);border-radius:0 2px 2px 0;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone body -->
+    <div class="phone-body">
+
+      <!-- Fixed header (outside scroll) -->
+      <div style="padding:12px 22px 0;">
+
+        <!-- Title + week nav -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <h2 style="color:#f1fcf1;font-size:22px;font-weight:800;margin:0;">Mi Agenda</h2>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button style="width:28px;height:28px;background:rgba(116,154,118,0.1);border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#749a76" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <span style="color:#f1fcf1;font-size:13px;font-weight:700;">25–31 Mayo</span>
+            <button style="width:28px;height:28px;background:rgba(116,154,118,0.1);border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#749a76" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- View toggle -->
+        <div style="display:flex;gap:6px;margin-bottom:14px;">
+          <button class="view-tab" onclick="window.location.href='01_monthly_calendar.html'">Mensual</button>
+          <button class="view-tab active">Semanal</button>
+        </div>
+
+        <!-- Week strip — May 25(Lun) to May 31(Dom) -->
+        <div style="display:flex;padding:0;margin-bottom:12px;">
+
+          <!-- Lun 25 — past -->
+          <div class="week-day">
+            <span class="week-day-label" style="color:rgba(116,154,118,0.4);">Lun</span>
+            <div class="week-day-num past">25</div>
+            <div class="week-dot-row">
+              <svg width="5" height="7" viewBox="0 0 24 24" fill="#14ff69" opacity="0.4"><path d="M13 2L3.5 13.5H9.5L8 22L20.5 10.5H14.5L13 2Z"/></svg>
+            </div>
+          </div>
+
+          <!-- Mar 26 — HOY -->
+          <div class="week-day">
+            <span class="week-day-label" style="color:#14ff69;">Mar</span>
+            <div class="week-day-num today">26</div>
+            <div class="week-dot-row">
+              <svg width="5" height="7" viewBox="0 0 24 24" fill="#131e13"><path d="M13 2L3.5 13.5H9.5L8 22L20.5 10.5H14.5L13 2Z"/></svg>
+              <svg width="5" height="7" viewBox="0 0 24 24" fill="#131e13"><path d="M13 2L3.5 13.5H9.5L8 22L20.5 10.5H14.5L13 2Z"/></svg>
+            </div>
+          </div>
+
+          <!-- Mié 27 — future, Almuerzo -->
+          <div class="week-day">
+            <span class="week-day-label" style="color:rgba(116,154,118,0.55);">Mié</span>
+            <div class="week-day-num normal">27</div>
+            <div class="week-dot-row">
+              <svg width="5" height="7" viewBox="0 0 24 24" fill="#14ff69"><path d="M13 2L3.5 13.5H9.5L8 22L20.5 10.5H14.5L13 2Z"/></svg>
+            </div>
+          </div>
+
+          <!-- Jue 28 — future, Desayuno + Almuerzo -->
+          <div class="week-day">
+            <span class="week-day-label" style="color:rgba(116,154,118,0.55);">Jue</span>
+            <div class="week-day-num normal">28</div>
+            <div class="week-dot-row">
+              <svg width="5" height="7" viewBox="0 0 24 24" fill="#f59e0b"><path d="M13 2L3.5 13.5H9.5L8 22L20.5 10.5H14.5L13 2Z"/></svg>
+              <svg width="5" height="7" viewBox="0 0 24 24" fill="#14ff69"><path d="M13 2L3.5 13.5H9.5L8 22L20.5 10.5H14.5L13 2Z"/></svg>
+            </div>
+          </div>
+
+          <!-- Vie 29 — future, Almuerzo + Cena -->
+          <div class="week-day">
+            <span class="week-day-label" style="color:rgba(116,154,118,0.55);">Vie</span>
+            <div class="week-day-num normal">29</div>
+            <div class="week-dot-row">
+              <svg width="5" height="7" viewBox="0 0 24 24" fill="#14ff69"><path d="M13 2L3.5 13.5H9.5L8 22L20.5 10.5H14.5L13 2Z"/></svg>
+              <svg width="5" height="7" viewBox="0 0 24 24" fill="#a78bfa"><path d="M13 2L3.5 13.5H9.5L8 22L20.5 10.5H14.5L13 2Z"/></svg>
+            </div>
+          </div>
+
+          <!-- Sáb 30 — future, empty -->
+          <div class="week-day">
+            <span class="week-day-label" style="color:rgba(116,154,118,0.4);">Sáb</span>
+            <div class="week-day-num normal" style="color:rgba(241,252,241,0.3);">30</div>
+            <div class="week-dot-row"></div>
+          </div>
+
+          <!-- Dom 31 — future, empty -->
+          <div class="week-day">
+            <span class="week-day-label" style="color:rgba(116,154,118,0.4);">Dom</span>
+            <div class="week-day-num normal" style="color:rgba(241,252,241,0.3);">31</div>
+            <div class="week-dot-row"></div>
+          </div>
+
+        </div><!-- end week strip -->
+
+        <!-- Divider -->
+        <div style="height:1px;background:rgba(116,154,118,0.12);margin:0 0 2px;"></div>
+
+      </div><!-- end fixed header -->
+
+      <!-- Scrollable meal list -->
+      <div style="height:calc(790px - 78px - 202px);overflow-y:auto;scrollbar-width:none;padding:0 22px 16px;">
+        <div style="height:0;"></div><!-- webkit scrollbar fix -->
+
+        <!-- ── LUN 25 (ayer / past) ── -->
+        <div class="day-section-hdr">
+          <span style="color:rgba(116,154,118,0.45);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Lun 25</span>
+          <span style="color:rgba(116,154,118,0.3);font-size:11px;">1 comida</span>
+        </div>
+        <!-- Almuerzo -->
+        <div class="meal-card" style="opacity:0.62;">
+          <img src="../../assets/images/tazon-pollo.jpg" alt="" class="meal-thumb" />
+          <div style="flex:1;min-width:0;">
+            <div style="margin-bottom:4px;">
+              <span style="background:rgba(20,255,105,0.12);color:#14ff69;font-size:9.5px;font-weight:700;letter-spacing:0.06em;padding:2px 8px;border-radius:999px;text-transform:uppercase;">Almuerzo</span>
+            </div>
+            <p style="color:#f1fcf1;font-size:13.5px;font-weight:700;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Tazón Proteico de Pollo</p>
+            <div style="display:flex;gap:8px;">
+              <span style="color:#14ff69;font-size:11px;font-weight:600;">42g P</span>
+              <span style="color:#f59e0b;font-size:11px;font-weight:600;">48g C</span>
+              <span style="color:#f97316;font-size:11px;font-weight:600;">16g G</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <p style="color:#f1fcf1;font-size:15px;font-weight:700;margin:0;">486</p>
+            <p style="color:#749a76;font-size:10px;margin:2px 0 0;">kcal</p>
+          </div>
+        </div>
+
+        <!-- ── MAR 26 — HOY ── -->
+        <div class="day-section-hdr">
+          <div style="display:flex;align-items:center;gap:7px;">
+            <span style="color:#14ff69;font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;">Hoy · Mar 26</span>
+            <div style="width:6px;height:6px;background:#14ff69;border-radius:50%;box-shadow:0 0 6px #14ff69;"></div>
+          </div>
+          <span style="color:rgba(116,154,118,0.3);font-size:11px;">2 comidas</span>
+        </div>
+
+        <!-- Order close banner -->
+        <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.22);border-radius:12px;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+            <span style="color:#f59e0b;font-size:12px;font-weight:600;">Cierre de hoy: 12:00 PM</span>
+          </div>
+          <span style="color:rgba(245,158,11,0.85);font-size:12px;font-weight:800;">2h 19m</span>
+        </div>
+
+        <!-- Almuerzo hoy -->
+        <div class="meal-card">
+          <img src="../../assets/images/tazon-pollo.jpg" alt="" class="meal-thumb" />
+          <div style="flex:1;min-width:0;">
+            <div style="margin-bottom:4px;">
+              <span style="background:rgba(20,255,105,0.12);color:#14ff69;font-size:9.5px;font-weight:700;letter-spacing:0.06em;padding:2px 8px;border-radius:999px;text-transform:uppercase;">Almuerzo</span>
+            </div>
+            <p style="color:#f1fcf1;font-size:13.5px;font-weight:700;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Tazón Proteico de Pollo</p>
+            <div style="display:flex;gap:8px;">
+              <span style="color:#14ff69;font-size:11px;font-weight:600;">42g P</span>
+              <span style="color:#f59e0b;font-size:11px;font-weight:600;">48g C</span>
+              <span style="color:#f97316;font-size:11px;font-weight:600;">16g G</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <p style="color:#f1fcf1;font-size:15px;font-weight:700;margin:0;">486</p>
+            <p style="color:#749a76;font-size:10px;margin:2px 0 0;">kcal</p>
+          </div>
+        </div>
+
+        <!-- Cena hoy -->
+        <div class="meal-card">
+          <img src="../../assets/images/salmon-quinoa.jpg" alt="" class="meal-thumb" />
+          <div style="flex:1;min-width:0;">
+            <div style="margin-bottom:4px;">
+              <span style="background:rgba(167,139,250,0.15);color:#a78bfa;font-size:9.5px;font-weight:700;letter-spacing:0.06em;padding:2px 8px;border-radius:999px;text-transform:uppercase;">Cena</span>
+            </div>
+            <p style="color:#f1fcf1;font-size:13.5px;font-weight:700;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Salmón con Quinoa Verde</p>
+            <div style="display:flex;gap:8px;">
+              <span style="color:#14ff69;font-size:11px;font-weight:600;">38g P</span>
+              <span style="color:#f59e0b;font-size:11px;font-weight:600;">44g C</span>
+              <span style="color:#f97316;font-size:11px;font-weight:600;">22g G</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <p style="color:#f1fcf1;font-size:15px;font-weight:700;margin:0;">524</p>
+            <p style="color:#749a76;font-size:10px;margin:2px 0 0;">kcal</p>
+          </div>
+        </div>
+
+        <!-- ── MIÉ 27 ── -->
+        <div class="day-section-hdr">
+          <span style="color:#749a76;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Mié 27</span>
+          <span style="color:rgba(116,154,118,0.3);font-size:11px;">1 comida</span>
+        </div>
+        <div class="meal-card">
+          <img src="../../assets/images/salmon-quinoa.jpg" alt="" class="meal-thumb" />
+          <div style="flex:1;min-width:0;">
+            <div style="margin-bottom:4px;">
+              <span style="background:rgba(20,255,105,0.12);color:#14ff69;font-size:9.5px;font-weight:700;letter-spacing:0.06em;padding:2px 8px;border-radius:999px;text-transform:uppercase;">Almuerzo</span>
+            </div>
+            <p style="color:#f1fcf1;font-size:13.5px;font-weight:700;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Salmón con Quinoa Verde</p>
+            <div style="display:flex;gap:8px;">
+              <span style="color:#14ff69;font-size:11px;font-weight:600;">38g P</span>
+              <span style="color:#f59e0b;font-size:11px;font-weight:600;">44g C</span>
+              <span style="color:#f97316;font-size:11px;font-weight:600;">22g G</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <p style="color:#f1fcf1;font-size:15px;font-weight:700;margin:0;">524</p>
+            <p style="color:#749a76;font-size:10px;margin:2px 0 0;">kcal</p>
+          </div>
+        </div>
+
+        <!-- ── JUE 28 ── -->
+        <div class="day-section-hdr">
+          <span style="color:#749a76;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Jue 28</span>
+          <span style="color:rgba(116,154,118,0.3);font-size:11px;">2 comidas</span>
+        </div>
+        <!-- Desayuno Jue -->
+        <div class="meal-card">
+          <img src="../../assets/images/bowl-mediterraneo.jpg" alt="" class="meal-thumb" />
+          <div style="flex:1;min-width:0;">
+            <div style="margin-bottom:4px;">
+              <span style="background:rgba(245,158,11,0.14);color:#f59e0b;font-size:9.5px;font-weight:700;letter-spacing:0.06em;padding:2px 8px;border-radius:999px;text-transform:uppercase;">Desayuno</span>
+            </div>
+            <p style="color:#f1fcf1;font-size:13.5px;font-weight:700;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Bowl Mediterráneo</p>
+            <div style="display:flex;gap:8px;">
+              <span style="color:#14ff69;font-size:11px;font-weight:600;">24g P</span>
+              <span style="color:#f59e0b;font-size:11px;font-weight:600;">62g C</span>
+              <span style="color:#f97316;font-size:11px;font-weight:600;">14g G</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <p style="color:#f1fcf1;font-size:15px;font-weight:700;margin:0;">445</p>
+            <p style="color:#749a76;font-size:10px;margin:2px 0 0;">kcal</p>
+          </div>
+        </div>
+        <!-- Almuerzo Jue -->
+        <div class="meal-card">
+          <img src="../../assets/images/pechuga-espinaca.jpg" alt="" class="meal-thumb" />
+          <div style="flex:1;min-width:0;">
+            <div style="margin-bottom:4px;">
+              <span style="background:rgba(20,255,105,0.12);color:#14ff69;font-size:9.5px;font-weight:700;letter-spacing:0.06em;padding:2px 8px;border-radius:999px;text-transform:uppercase;">Almuerzo</span>
+            </div>
+            <p style="color:#f1fcf1;font-size:13.5px;font-weight:700;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Pechuga Rellena de Espinaca</p>
+            <div style="display:flex;gap:8px;">
+              <span style="color:#14ff69;font-size:11px;font-weight:600;">48g P</span>
+              <span style="color:#f59e0b;font-size:11px;font-weight:600;">24g C</span>
+              <span style="color:#f97316;font-size:11px;font-weight:600;">10g G</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <p style="color:#f1fcf1;font-size:15px;font-weight:700;margin:0;">398</p>
+            <p style="color:#749a76;font-size:10px;margin:2px 0 0;">kcal</p>
+          </div>
+        </div>
+
+        <!-- ── VIE 29 ── -->
+        <div class="day-section-hdr">
+          <span style="color:#749a76;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Vie 29</span>
+          <span style="color:rgba(116,154,118,0.3);font-size:11px;">2 comidas</span>
+        </div>
+        <!-- Almuerzo Vie -->
+        <div class="meal-card">
+          <img src="../../assets/images/tazon-pollo.jpg" alt="" class="meal-thumb" />
+          <div style="flex:1;min-width:0;">
+            <div style="margin-bottom:4px;">
+              <span style="background:rgba(20,255,105,0.12);color:#14ff69;font-size:9.5px;font-weight:700;letter-spacing:0.06em;padding:2px 8px;border-radius:999px;text-transform:uppercase;">Almuerzo</span>
+            </div>
+            <p style="color:#f1fcf1;font-size:13.5px;font-weight:700;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Tazón Proteico de Pollo</p>
+            <div style="display:flex;gap:8px;">
+              <span style="color:#14ff69;font-size:11px;font-weight:600;">42g P</span>
+              <span style="color:#f59e0b;font-size:11px;font-weight:600;">48g C</span>
+              <span style="color:#f97316;font-size:11px;font-weight:600;">16g G</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <p style="color:#f1fcf1;font-size:15px;font-weight:700;margin:0;">486</p>
+            <p style="color:#749a76;font-size:10px;margin:2px 0 0;">kcal</p>
+          </div>
+        </div>
+        <!-- Cena Vie -->
+        <div class="meal-card">
+          <img src="../../assets/images/bowl-mediterraneo.jpg" alt="" class="meal-thumb" />
+          <div style="flex:1;min-width:0;">
+            <div style="margin-bottom:4px;">
+              <span style="background:rgba(167,139,250,0.15);color:#a78bfa;font-size:9.5px;font-weight:700;letter-spacing:0.06em;padding:2px 8px;border-radius:999px;text-transform:uppercase;">Cena</span>
+            </div>
+            <p style="color:#f1fcf1;font-size:13.5px;font-weight:700;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Bowl Mediterráneo</p>
+            <div style="display:flex;gap:8px;">
+              <span style="color:#14ff69;font-size:11px;font-weight:600;">24g P</span>
+              <span style="color:#f59e0b;font-size:11px;font-weight:600;">62g C</span>
+              <span style="color:#f97316;font-size:11px;font-weight:600;">14g G</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <p style="color:#f1fcf1;font-size:15px;font-weight:700;margin:0;">445</p>
+            <p style="color:#749a76;font-size:10px;margin:2px 0 0;">kcal</p>
+          </div>
+        </div>
+
+        <!-- ── SÁB 30 — vacío ── -->
+        <div class="day-section-hdr">
+          <span style="color:rgba(116,154,118,0.4);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Sáb 30</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0 12px;border-bottom:1px solid rgba(116,154,118,0.08);">
+          <span style="color:rgba(116,154,118,0.4);font-size:13px;">Sin comidas agendadas</span>
+          <button style="color:#749a76;font-size:12px;font-weight:600;background:transparent;border:1.5px solid rgba(116,154,118,0.28);border-radius:999px;padding:5px 14px;cursor:pointer;font-family:'Inter',sans-serif;" onmouseover="this.style.borderColor='#749a76'" onmouseout="this.style.borderColor='rgba(116,154,118,0.28)'">+ Agregar</button>
+        </div>
+
+        <!-- ── DOM 31 — vacío ── -->
+        <div class="day-section-hdr">
+          <span style="color:rgba(116,154,118,0.4);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Dom 31</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0 12px;">
+          <span style="color:rgba(116,154,118,0.4);font-size:13px;">Sin comidas agendadas</span>
+          <button style="color:#749a76;font-size:12px;font-weight:600;background:transparent;border:1.5px solid rgba(116,154,118,0.28);border-radius:999px;padding:5px 14px;cursor:pointer;font-family:'Inter',sans-serif;" onmouseover="this.style.borderColor='#749a76'" onmouseout="this.style.borderColor='rgba(116,154,118,0.28)'">+ Agregar</button>
+        </div>
+
+      </div><!-- end scroll area -->
+
+      <!-- Bottom Navigation -->
+      <div class="bottom-nav">
+        <!-- Menú -->
+        <div class="nav-tab" onclick="window.location.href='../02_main_app/01_home_menu.html'">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(116,154,118,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12.5l9-9 9 9V21a1 1 0 01-1 1h-5v-5H9v5H4a1 1 0 01-1-1V12.5z"/>
+          </svg>
+          <span class="nav-lbl">Menú</span>
+        </div>
+        <!-- Agenda (active) -->
+        <div class="nav-tab active">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14ff69" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18"/>
+          </svg>
+          <span class="nav-lbl">Agenda</span>
+        </div>
+        <!-- QR -->
+        <div class="nav-tab" style="position:relative;">
+          <div style="position:absolute;top:-18px;width:46px;height:46px;background:#131e13;border-radius:15px;border:1.5px solid rgba(20,255,105,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="rgba(116,154,118,0.5)">
+              <path d="M2 2h9v9H2V2zm2 2v5h5V4H4zm1 1h3v3H5V5zM13 2h9v9h-9V2zm2 2v5h5V4h-5zm1 1h3v3h-3V5zM2 13h9v9H2v-9zm2 2v5h5v-5H4zm1 1h3v3H5v-3zM14 14h3v3h-3v-3zM19 14h3v3h-3v-3zM14 19h3v3h-3v-3zM19 19h3v3h-3v-3zM17 17h1v1h-1v-1z"/>
+            </svg>
+          </div>
+        </div>
+        <!-- Perfil -->
+        <div class="nav-tab">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(116,154,118,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="7" r="4"/>
+            <path d="M3 21c0-5 3.6-9 9-9s9 4 9 9"/>
+          </svg>
+          <span class="nav-lbl">Perfil</span>
+        </div>
+        <!-- Ajustes -->
+        <div class="nav-tab">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(116,154,118,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M20 12h1M3 12H2M12 4V3M12 21v-1M17.66 6.34l.7-.71M5.64 18.36l-.71.7M17.66 17.66l.7.71M5.64 5.64l-.71-.7"/>
+          </svg>
+          <span class="nav-lbl">Ajustes</span>
+        </div>
+      </div>
+
+    </div><!-- end phone-body -->
+  </div><!-- end phone-frame -->
+
+  <p class="page-label">FASE 3 · AGENDA · 3.2 – VISTA SEMANAL</p>
+
+</body>
+</html>

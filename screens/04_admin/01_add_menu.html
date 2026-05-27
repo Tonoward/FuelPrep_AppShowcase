@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Fuel Admin — Agregar Menú</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{electric:'#14ff69',sage:'#749a76',frost:'#f1fcf1',forest:'#131e13'},fontFamily:{sans:['Inter','sans-serif']}}}}</script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:#f1fcf1;margin:0;color:#131e13;}
+    .admin-input{width:100%;background:#fff;border:1.5px solid rgba(19,30,19,0.12);border-radius:10px;padding:10px 14px;color:#131e13;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.15s;}
+    .admin-input:focus{border-color:#14ff69;}
+    .admin-label{display:block;color:#749a76;font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:6px;}
+    .admin-card{background:#fff;border-radius:16px;border:1px solid rgba(19,30,19,0.07);box-shadow:0 1px 4px rgba(19,30,19,0.05);}
+    .section-title{color:#131e13;font-size:13px;font-weight:700;margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid rgba(19,30,19,0.07);}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;border-left:2.5px solid transparent;text-decoration:none;cursor:pointer;transition:all 0.15s;color:#749a76;}
+    .nav-item:hover{background:rgba(116,154,118,0.1);color:#f1fcf1;}
+    .nav-item.active{border-left-color:#14ff69;background:rgba(20,255,105,0.08);color:#f1fcf1;}
+    .cat-pill{padding:8px 16px;border-radius:999px;border:1.5px solid rgba(19,30,19,0.12);background:transparent;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;color:#749a76;transition:all 0.15s;}
+    .cat-pill.active{background:#14ff69;border-color:#14ff69;color:#131e13;}
+    .allergen-pill{padding:7px 13px;border-radius:999px;border:1.5px solid rgba(19,30,19,0.12);background:transparent;font-size:12.5px;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;color:#749a76;transition:all 0.15s;}
+    .allergen-pill.sel{background:rgba(20,255,105,0.1);border-color:#14ff69;color:#131e13;}
+    /* Toggle switch */
+    .toggle-track{width:44px;height:24px;background:#e2e8e2;border-radius:999px;position:relative;cursor:pointer;transition:background 0.2s;}
+    .toggle-track.on{background:#14ff69;}
+    .toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+    .toggle-track.on .toggle-thumb{left:23px;}
+  </style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside style="width:220px;background:#131e13;position:fixed;top:0;bottom:38px;left:0;display:flex;flex-direction:column;z-index:20;border-right:1px solid rgba(116,154,118,0.1);">
+  <div style="padding:22px 20px 18px;border-bottom:1px solid rgba(116,154,118,0.1);">
+    <span style="color:#14ff69;font-size:20px;font-weight:800;">⚡</span>
+    <span style="color:#f1fcf1;font-size:16px;font-weight:800;margin-left:6px;">Fuel Admin</span>
+  </div>
+  <nav style="flex:1;padding:10px;display:flex;flex-direction:column;gap:1px;overflow-y:auto;">
+    <a class="nav-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span style="font-size:13.5px;font-weight:500;">Dashboard</span></a>
+    <a class="nav-item active" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span style="font-size:13.5px;font-weight:600;">Menús</span></a>
+    <a class="nav-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span style="font-size:13.5px;font-weight:500;">Pedidos</span></a>
+    <a class="nav-item" href="03_kitchen_orders.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a7 7 0 017 7c0 4-3 6-3 9H8c0-3-3-5-3-9a7 7 0 017-7z"/><line x1="8" y1="22" x2="16" y2="22"/><line x1="9" y1="18" x2="15" y2="18"/></svg><span style="font-size:13.5px;font-weight:500;">Cocina</span></a>
+    <a class="nav-item" href="05_shopping_list.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2h12l1 5H5L6 2z"/><path d="M5 7l1 13h12l1-13"/><path d="M9 11v5M12 11v5M15 11v5"/></svg><span style="font-size:13.5px;font-weight:500;">Compras</span></a>
+    <a class="nav-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span style="font-size:13.5px;font-weight:500;">Entregas</span></a>
+    <a class="nav-item" href="02_analytics.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span style="font-size:13.5px;font-weight:500;">Analíticas</span></a>
+    <a class="nav-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><span style="font-size:13.5px;font-weight:500;">Ajustes</span></a>
+  </nav>
+  <div style="padding:14px;border-top:1px solid rgba(116,154,118,0.1);">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div style="width:34px;height:34px;background:#14ff69;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="color:#131e13;font-size:12px;font-weight:800;">MA</span></div>
+      <div><p style="color:#f1fcf1;font-size:12.5px;font-weight:700;margin:0;">Miguel Admin</p><p style="color:#749a76;font-size:11px;margin:2px 0 0;">Administrador</p></div>
+    </div>
+    <button style="width:100%;background:rgba(116,154,118,0.1);border:none;border-radius:8px;padding:7px;color:#749a76;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Cerrar sesión</button>
+  </div>
+</aside>
+
+<!-- ── TOP BAR ── -->
+<header style="position:fixed;top:0;left:220px;right:0;height:58px;background:#fff;border-bottom:1px solid rgba(19,30,19,0.08);padding:0 32px;display:flex;align-items:center;justify-content:space-between;z-index:10;box-shadow:0 1px 3px rgba(19,30,19,0.04);">
+  <div style="display:flex;align-items:center;gap:8px;">
+    <a href="#" style="color:#749a76;font-size:13px;text-decoration:none;">Menús</a>
+    <span style="color:rgba(19,30,19,0.25);font-size:13px;">/</span>
+    <span style="color:#131e13;font-size:13px;font-weight:600;">Nuevo Menú</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div style="position:relative;">
+      <input type="text" placeholder="Buscar menús..." class="admin-input" style="width:220px;padding-left:36px;font-size:13px;" />
+      <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#749a76" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </div>
+    <button style="width:36px;height:36px;border-radius:10px;border:1.5px solid rgba(19,30,19,0.1);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#749a76" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <div style="position:absolute;top:7px;right:7px;width:7px;height:7px;background:#14ff69;border-radius:50%;border:2px solid #fff;"></div>
+    </button>
+    <span style="color:#749a76;font-size:13px;font-weight:500;">26 de Mayo, 2026</span>
+  </div>
+</header>
+
+<!-- ── MAIN CONTENT ── -->
+<div style="margin-left:220px;padding:82px 32px 60px;">
+
+  <!-- Page header -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;">
+    <div>
+      <h1 style="font-size:26px;font-weight:800;margin:0 0 4px;">Agregar Nuevo Menú</h1>
+      <p style="color:#749a76;font-size:14px;margin:0;">Completa la información para publicar un nuevo menú en la plataforma.</p>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button style="padding:10px 20px;border-radius:10px;border:1.5px solid rgba(19,30,19,0.15);background:#fff;color:#749a76;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;" onmouseover="this.style.borderColor='#749a76'" onmouseout="this.style.borderColor='rgba(19,30,19,0.15)'">Guardar borrador</button>
+      <button style="padding:10px 22px;border-radius:10px;border:none;background:#14ff69;color:#131e13;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 2px 8px rgba(20,255,105,0.3);" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">Guardar Menú</button>
+    </div>
+  </div>
+
+  <!-- 2-column grid -->
+  <div style="display:grid;grid-template-columns:3fr 2fr;gap:24px;align-items:start;">
+
+    <!-- ── LEFT: FORM ── -->
+    <div style="display:flex;flex-direction:column;gap:20px;">
+
+      <!-- Basic info card -->
+      <div class="admin-card" style="padding:24px;">
+        <p class="section-title">Información General</p>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div>
+            <label class="admin-label">Nombre del menú</label>
+            <input class="admin-input" type="text" placeholder="Ej. Tazón Proteico de Pollo" value="Tazón Proteico de Pollo" />
+          </div>
+          <div>
+            <label class="admin-label">Descripción</label>
+            <textarea class="admin-input" rows="3" style="resize:vertical;" placeholder="Describe los ingredientes y la preparación...">Pechuga de pollo a la parrilla sobre base de arroz integral con vegetales salteados, aderezo de limón y hierbas frescas.</textarea>
+          </div>
+          <div>
+            <label class="admin-label">Categoría</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="cat-pill" onclick="selectCat(this)">Desayuno</button>
+              <button class="cat-pill active" onclick="selectCat(this)">Almuerzo</button>
+              <button class="cat-pill" onclick="selectCat(this)">Cena</button>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div>
+              <label class="admin-label">Tiempo de preparación</label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input class="admin-input" type="number" value="25" style="flex:1;" />
+                <span style="color:#749a76;font-size:13px;font-weight:600;white-space:nowrap;">min</span>
+              </div>
+            </div>
+            <div>
+              <label class="admin-label">Disponibilidad</label>
+              <div style="display:flex;align-items:center;gap:12px;padding:10px 0;">
+                <div class="toggle-track on" onclick="this.classList.toggle('on')" id="toggle1">
+                  <div class="toggle-thumb"></div>
+                </div>
+                <span id="toggle1-lbl" style="color:#131e13;font-size:13.5px;font-weight:500;">Disponible</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ingredients card -->
+      <div class="admin-card" style="padding:24px;">
+        <p class="section-title">Ingredientes</p>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-bottom:10px;padding:0 4px;">
+          <span style="color:#749a76;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">Ingrediente</span>
+          <span style="color:#749a76;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-align:right;">Cantidad</span>
+          <span></span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;" id="ingredients-list">
+          <div style="display:grid;grid-template-columns:1fr 100px 36px;gap:8px;align-items:center;">
+            <input class="admin-input" type="text" value="Pechuga de pollo" style="font-size:13.5px;" />
+            <div style="display:flex;gap:4px;align-items:center;"><input class="admin-input" type="text" value="210" style="text-align:right;font-size:13.5px;" /><span style="color:#749a76;font-size:12px;">g</span></div>
+            <button style="width:32px;height:32px;border-radius:8px;border:1.5px solid rgba(19,30,19,0.12);background:#fff;color:#749a76;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;" onclick="this.parentElement.remove()">×</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 100px 36px;gap:8px;align-items:center;">
+            <input class="admin-input" type="text" value="Arroz integral" style="font-size:13.5px;" />
+            <div style="display:flex;gap:4px;align-items:center;"><input class="admin-input" type="text" value="100" style="text-align:right;font-size:13.5px;" /><span style="color:#749a76;font-size:12px;">g</span></div>
+            <button style="width:32px;height:32px;border-radius:8px;border:1.5px solid rgba(19,30,19,0.12);background:#fff;color:#749a76;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;" onclick="this.parentElement.remove()">×</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 100px 36px;gap:8px;align-items:center;">
+            <input class="admin-input" type="text" value="Brócoli" style="font-size:13.5px;" />
+            <div style="display:flex;gap:4px;align-items:center;"><input class="admin-input" type="text" value="80" style="text-align:right;font-size:13.5px;" /><span style="color:#749a76;font-size:12px;">g</span></div>
+            <button style="width:32px;height:32px;border-radius:8px;border:1.5px solid rgba(19,30,19,0.12);background:#fff;color:#749a76;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;" onclick="this.parentElement.remove()">×</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 100px 36px;gap:8px;align-items:center;">
+            <input class="admin-input" type="text" value="Aceite de oliva" style="font-size:13.5px;" />
+            <div style="display:flex;gap:4px;align-items:center;"><input class="admin-input" type="text" value="8" style="text-align:right;font-size:13.5px;" /><span style="color:#749a76;font-size:12px;">ml</span></div>
+            <button style="width:32px;height:32px;border-radius:8px;border:1.5px solid rgba(19,30,19,0.12);background:#fff;color:#749a76;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;" onclick="this.parentElement.remove()">×</button>
+          </div>
+        </div>
+        <button onclick="alert('Agregar ingrediente')" style="margin-top:10px;width:100%;padding:9px;border-radius:10px;border:1.5px dashed rgba(19,30,19,0.18);background:transparent;color:#749a76;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;" onmouseover="this.style.borderColor='#14ff69';this.style.color='#131e13'" onmouseout="this.style.borderColor='rgba(19,30,19,0.18)';this.style.color='#749a76'">+ Agregar Ingrediente</button>
+      </div>
+
+      <!-- Nutrition card -->
+      <div class="admin-card" style="padding:24px;">
+        <p class="section-title">Información Nutricional</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div><label class="admin-label">Calorías</label><div style="display:flex;gap:5px;align-items:center;"><input class="admin-input" type="number" value="486" /><span style="color:#749a76;font-size:12px;white-space:nowrap;">kcal</span></div></div>
+          <div><label class="admin-label">Proteína</label><div style="display:flex;gap:5px;align-items:center;"><input class="admin-input" type="number" value="42" style="border-color:rgba(20,255,105,0.4);" /><span style="color:#14ff69;font-size:12px;white-space:nowrap;">g</span></div></div>
+          <div><label class="admin-label">Carbohidratos</label><div style="display:flex;gap:5px;align-items:center;"><input class="admin-input" type="number" value="48" style="border-color:rgba(245,158,11,0.4);" /><span style="color:#f59e0b;font-size:12px;white-space:nowrap;">g</span></div></div>
+          <div><label class="admin-label">Grasas</label><div style="display:flex;gap:5px;align-items:center;"><input class="admin-input" type="number" value="16" style="border-color:rgba(249,115,22,0.4);" /><span style="color:#f97316;font-size:12px;white-space:nowrap;">g</span></div></div>
+          <div><label class="admin-label">Fibra</label><div style="display:flex;gap:5px;align-items:center;"><input class="admin-input" type="number" value="6.4" /><span style="color:#749a76;font-size:12px;white-space:nowrap;">g</span></div></div>
+          <div><label class="admin-label">Sodio</label><div style="display:flex;gap:5px;align-items:center;"><input class="admin-input" type="number" value="420" /><span style="color:#749a76;font-size:12px;white-space:nowrap;">mg</span></div></div>
+        </div>
+        <!-- Visual macro split bar -->
+        <div style="margin-top:16px;">
+          <div style="display:flex;height:6px;border-radius:999px;overflow:hidden;gap:2px;">
+            <div style="width:35%;background:#14ff69;border-radius:999px 0 0 999px;"></div>
+            <div style="width:39%;background:#f59e0b;"></div>
+            <div style="flex:1;background:#f97316;border-radius:0 999px 999px 0;"></div>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:7px;">
+            <span style="color:#14ff69;font-size:11px;font-weight:600;">P 35%</span>
+            <span style="color:#f59e0b;font-size:11px;font-weight:600;">C 39%</span>
+            <span style="color:#f97316;font-size:11px;font-weight:600;">G 13%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Allergens card -->
+      <div class="admin-card" style="padding:24px;">
+        <p class="section-title">Alérgenos</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <button class="allergen-pill" onclick="this.classList.toggle('sel')">🌾 Gluten</button>
+          <button class="allergen-pill" onclick="this.classList.toggle('sel')">🥛 Lácteos</button>
+          <button class="allergen-pill" onclick="this.classList.toggle('sel')">🥜 Frutos secos</button>
+          <button class="allergen-pill" onclick="this.classList.toggle('sel')">🥚 Huevos</button>
+          <button class="allergen-pill" onclick="this.classList.toggle('sel')">🦐 Mariscos</button>
+          <button class="allergen-pill" onclick="this.classList.toggle('sel')">🫘 Soya</button>
+          <button class="allergen-pill" onclick="this.classList.toggle('sel')">🐟 Pescado</button>
+          <button class="allergen-pill" onclick="this.classList.toggle('sel')">🌿 Sésamo</button>
+        </div>
+      </div>
+
+    </div><!-- end left -->
+
+    <!-- ── RIGHT: IMAGE + ACTIONS ── -->
+    <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:82px;">
+
+      <!-- Image upload card -->
+      <div class="admin-card" style="padding:20px;">
+        <p class="section-title">Foto del Menú</p>
+        <!-- Preview image (simulating an uploaded file) -->
+        <div style="position:relative;border-radius:12px;overflow:hidden;margin-bottom:12px;">
+          <img src="../../assets/images/tazon-pollo.jpg" alt="Preview" style="width:100%;height:200px;object-fit:cover;" />
+          <div style="position:absolute;inset:0;background:rgba(19,30,19,0.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
+            <button style="padding:8px 16px;background:#14ff69;border:none;border-radius:8px;color:#131e13;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">Cambiar foto</button>
+          </div>
+        </div>
+        <div style="border:1.5px dashed rgba(19,30,19,0.18);border-radius:10px;padding:16px;text-align:center;cursor:pointer;" onmouseover="this.style.borderColor='#14ff69'" onmouseout="this.style.borderColor='rgba(19,30,19,0.18)'">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#749a76" stroke-width="2" stroke-linecap="round" style="margin:0 auto 8px;display:block;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p style="color:#749a76;font-size:12.5px;margin:0;"><span style="color:#131e13;font-weight:600;">Click para subir</span> o arrastra aquí</p>
+          <p style="color:#749a76;font-size:11px;margin:4px 0 0;">PNG, JPG hasta 5MB</p>
+        </div>
+      </div>
+
+      <!-- Status card -->
+      <div class="admin-card" style="padding:20px;">
+        <p class="section-title">Publicación</p>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:#749a76;font-size:13px;">Estado</span>
+            <span style="background:rgba(20,255,105,0.12);color:#16a34a;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;">Activo</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:#749a76;font-size:13px;">Próxima fecha</span>
+            <span style="color:#131e13;font-size:13px;font-weight:600;">27 Mayo 2026</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:#749a76;font-size:13px;">Veces servido</span>
+            <span style="color:#131e13;font-size:13px;font-weight:600;">—</span>
+          </div>
+        </div>
+        <div style="height:1px;background:rgba(19,30,19,0.07);margin:14px 0;"></div>
+        <button style="width:100%;padding:12px;border-radius:10px;border:none;background:#14ff69;color:#131e13;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 2px 10px rgba(20,255,105,0.3);" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">Guardar Menú</button>
+        <button style="width:100%;padding:10px;border-radius:10px;border:1.5px solid rgba(19,30,19,0.12);background:#fff;color:#749a76;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-top:8px;" onmouseover="this.style.borderColor='#749a76'" onmouseout="this.style.borderColor='rgba(19,30,19,0.12)'">Guardar borrador</button>
+      </div>
+
+    </div><!-- end right -->
+
+  </div><!-- end grid -->
+</div><!-- end main -->
+
+<!-- ── DEV PAGE NAV ── -->
+<div style="position:fixed;bottom:0;left:0;right:0;height:38px;background:rgba(6,13,6,0.92);backdrop-filter:blur(10px);border-top:1px solid rgba(20,255,105,0.12);z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 32px;">
+  <a href="../03_schedule/02_weekly_view.html" style="color:rgba(116,154,118,0.5);font-size:12.5px;text-decoration:none;" onmouseover="this.style.color='#749a76'" onmouseout="this.style.color='rgba(116,154,118,0.5)'">← Anterior</a>
+  <span style="color:rgba(116,154,118,0.3);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;">FASE 4 · ADMIN · 4.1 – AGREGAR MENÚ</span>
+  <a href="02_analytics.html" style="color:rgba(20,255,105,0.6);font-size:12.5px;text-decoration:none;" onmouseover="this.style.color='#14ff69'" onmouseout="this.style.color='rgba(20,255,105,0.6)'">Siguiente →</a>
+</div>
+
+<script>
+  function selectCat(el) {
+    el.parentElement.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+  }
+  // Toggle label update
+  document.getElementById('toggle1').addEventListener('click', function() {
+    document.getElementById('toggle1-lbl').textContent = this.classList.contains('on') ? 'Disponible' : 'No disponible';
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Fuel — Etiquetas de Comida</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #e8ede8;
+      margin: 0;
+      padding: 40px 32px 80px;
+      color: #131e13;
+    }
+
+    /* ── DEV PAGE HEADER ── */
+    .dev-header {
+      max-width: 1100px;
+      margin: 0 auto 32px;
+    }
+    .dev-header h1 {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 0 0 4px;
+      color: #131e13;
+    }
+    .dev-header p {
+      font-size: 13.5px;
+      color: #749a76;
+      margin: 0 0 18px;
+    }
+    .dev-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .btn-print {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 18px;
+      border-radius: 10px;
+      background: #131e13;
+      color: #14ff69;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-print:hover { opacity: 0.85; }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 18px;
+      border-radius: 10px;
+      background: #fff;
+      color: #131e13;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1.5px solid rgba(19,30,19,0.15);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ── TICKETS LAYOUT ── */
+    .tickets-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+      align-items: flex-start;
+    }
+    .ticket-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: center;
+    }
+    .ticket-label-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: #749a76;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── THE TICKET ── */
+    .ticket {
+      width: 285px;
+      background: #ffffff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(19,30,19,0.12), 0 0 0 1px rgba(19,30,19,0.06);
+      page-break-inside: avoid;
+    }
+
+    /* Color stripe on top by meal type */
+    .ticket-stripe {
+      height: 6px;
+    }
+    .stripe-desayuno { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .stripe-almuerzo { background: linear-gradient(90deg, #14ff69, #6ee7b7); }
+    .stripe-cena     { background: linear-gradient(90deg, #a78bfa, #c4b5fd); }
+
+    .ticket-header {
+      padding: 14px 16px 10px;
+      border-bottom: 1px dashed rgba(19,30,19,0.1);
+    }
+    .ticket-logo-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .ticket-logo {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .ticket-logo span:first-child {
+      font-size: 16px;
+      font-weight: 900;
+      color: #14ff69;
+    }
+    .ticket-logo span:last-child {
+      font-size: 13px;
+      font-weight: 800;
+      color: #131e13;
+    }
+    .ticket-code {
+      font-size: 11px;
+      font-weight: 800;
+      color: #131e13;
+      background: #f1fcf1;
+      padding: 3px 9px;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+    }
+    .ticket-meal-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 9px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .badge-desayuno { background: rgba(245,158,11,0.12); color: #d97706; }
+    .badge-almuerzo { background: rgba(20,255,105,0.12); color: #16a34a; }
+    .badge-cena     { background: rgba(167,139,250,0.14); color: #7c3aed; }
+
+    .ticket-menu-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: #131e13;
+      margin: 6px 0 2px;
+      line-height: 1.3;
+    }
+    .ticket-client {
+      font-size: 12px;
+      color: #749a76;
+      font-weight: 500;
+    }
+
+    /* QR + date section */
+    .ticket-qr-section {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px dashed rgba(19,30,19,0.1);
+    }
+    .qr-placeholder {
+      width: 68px;
+      height: 68px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1.5px solid rgba(19,30,19,0.08);
+    }
+    .ticket-date-info {
+      flex: 1;
+    }
+    .ticket-date-info p {
+      margin: 0;
+      font-size: 12px;
+      color: #749a76;
+      line-height: 1.6;
+    }
+    .ticket-date-info strong {
+      color: #131e13;
+      font-weight: 700;
+    }
+
+    /* Macro row */
+    .ticket-macros {
+      padding: 10px 16px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      border-bottom: 1px dashed rgba(19,30,19,0.1);
+    }
+    .macro-cell {
+      text-align: center;
+      padding: 6px 4px;
+      border-radius: 8px;
+    }
+    .macro-cell .val {
+      font-size: 13px;
+      font-weight: 800;
+      margin: 0 0 1px;
+    }
+    .macro-cell .lbl {
+      font-size: 9.5px;
+      font-weight: 600;
+      color: #749a76;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Allergens + notes */
+    .ticket-info {
+      padding: 10px 16px;
+      border-bottom: 1px dashed rgba(19,30,19,0.1);
+    }
+    .ticket-info-label {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #749a76;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 0 0 5px;
+    }
+    .allergen-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .allergen-chip {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #f1fcf1;
+      color: #749a76;
+      border: 1px solid rgba(116,154,118,0.2);
+    }
+    .ticket-notes {
+      font-size: 11px;
+      font-style: italic;
+      color: #131e13;
+      background: rgba(245,158,11,0.05);
+      border-left: 2.5px solid #f59e0b;
+      padding: 6px 9px;
+      border-radius: 0 7px 7px 0;
+      line-height: 1.5;
+      margin: 0;
+    }
+    .no-notes {
+      font-size: 11px;
+      color: rgba(116,154,118,0.5);
+      font-style: italic;
+    }
+
+    /* Footer */
+    .ticket-footer {
+      padding: 9px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fafefa;
+    }
+    .ticket-footer span {
+      font-size: 10px;
+      color: rgba(116,154,118,0.55);
+    }
+    .ticket-footer .ts {
+      font-weight: 600;
+      color: rgba(19,30,19,0.35);
+    }
+
+    /* ── PRINT STYLES ── */
+    @media print {
+      body {
+        background: white;
+        padding: 8mm;
+      }
+      .dev-header, .dev-nav { display: none !important; }
+      .tickets-wrapper {
+        gap: 6mm;
+        max-width: 100%;
+      }
+      .ticket-group { gap: 2mm; }
+      .ticket-label-tag { display: none; }
+      .ticket {
+        width: 100mm;
+        box-shadow: none;
+        border: 0.5pt solid #ddd;
+        border-radius: 4mm;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── DEV HEADER ── -->
+<div class="dev-header">
+  <h1>⚡ Fuel — Etiquetas de Comida</h1>
+  <p>Mockup de tickets para impresión · 100mm × 150mm · Formato rollo térmico</p>
+  <div class="dev-actions">
+    <button class="btn-print" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Imprimir etiquetas
+    </button>
+    <button class="btn-secondary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Exportar PDF
+    </button>
+    <span style="font-size:12px;color:rgba(116,154,118,0.7);margin-left:4px;">26 de Mayo, 2026 · Servicio de Almuerzo</span>
+  </div>
+</div>
+
+<!-- ── TICKETS GRID ── -->
+<div class="tickets-wrapper">
+
+  <!-- TICKET 1 — Almuerzo, sin alérgenos, con notas -->
+  <div class="ticket-group">
+    <span class="ticket-label-tag">FUL-1042 · Almuerzo</span>
+    <div class="ticket">
+      <div class="ticket-stripe stripe-almuerzo"></div>
+      <div class="ticket-header">
+        <div class="ticket-logo-row">
+          <div class="ticket-logo">
+            <span>⚡</span><span>Fuel</span>
+          </div>
+          <span class="ticket-code">FUL-1042</span>
+        </div>
+        <span class="ticket-meal-badge badge-almuerzo">Almuerzo</span>
+        <p class="ticket-menu-name">Tazón Proteico de Pollo</p>
+        <p class="ticket-client">Carlos Mendoza</p>
+      </div>
+      <div class="ticket-qr-section">
+        <!-- QR SVG placeholder -->
+        <div class="qr-placeholder">
+          <svg viewBox="0 0 68 68" width="68" height="68" xmlns="http://www.w3.org/2000/svg">
+            <rect width="68" height="68" fill="white"/>
+            <!-- Top-left finder pattern -->
+            <rect x="4" y="4" width="18" height="18" rx="2" fill="#131e13"/>
+            <rect x="7" y="7" width="12" height="12" rx="1" fill="white"/>
+            <rect x="10" y="10" width="6" height="6" fill="#131e13"/>
+            <!-- Top-right finder pattern -->
+            <rect x="46" y="4" width="18" height="18" rx="2" fill="#131e13"/>
+            <rect x="49" y="7" width="12" height="12" rx="1" fill="white"/>
+            <rect x="52" y="10" width="6" height="6" fill="#131e13"/>
+            <!-- Bottom-left finder pattern -->
+            <rect x="4" y="46" width="18" height="18" rx="2" fill="#131e13"/>
+            <rect x="7" y="49" width="12" height="12" rx="1" fill="white"/>
+            <rect x="10" y="52" width="6" height="6" fill="#131e13"/>
+            <!-- Data modules (decorative) -->
+            <rect x="26" y="4" width="4" height="4" fill="#131e13"/><rect x="32" y="4" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="10" width="4" height="4" fill="#131e13"/><rect x="38" y="10" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="16" width="4" height="4" fill="#131e13"/><rect x="32" y="16" width="4" height="4" fill="#131e13"/><rect x="38" y="16" width="4" height="4" fill="#131e13"/>
+            <rect x="4" y="26" width="4" height="4" fill="#131e13"/><rect x="10" y="26" width="4" height="4" fill="#131e13"/><rect x="16" y="26" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="26" width="4" height="4" fill="#14ff69"/><rect x="32" y="26" width="4" height="4" fill="#131e13"/><rect x="38" y="26" width="4" height="4" fill="#131e13"/><rect x="44" y="26" width="4" height="4" fill="#131e13"/><rect x="50" y="26" width="4" height="4" fill="#131e13"/>
+            <rect x="4" y="32" width="4" height="4" fill="#131e13"/><rect x="16" y="32" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="32" width="4" height="4" fill="#131e13"/><rect x="38" y="32" width="4" height="4" fill="#131e13"/><rect x="50" y="32" width="4" height="4" fill="#131e13"/><rect x="56" y="32" width="4" height="4" fill="#131e13"/>
+            <rect x="4" y="38" width="4" height="4" fill="#131e13"/><rect x="10" y="38" width="4" height="4" fill="#131e13"/><rect x="22" y="38" width="4" height="4" fill="#131e13"/>
+            <rect x="32" y="38" width="4" height="4" fill="#131e13"/><rect x="44" y="38" width="4" height="4" fill="#131e13"/><rect x="56" y="38" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="44" width="4" height="4" fill="#131e13"/><rect x="38" y="44" width="4" height="4" fill="#131e13"/><rect x="56" y="44" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="50" width="4" height="4" fill="#131e13"/><rect x="32" y="50" width="4" height="4" fill="#131e13"/><rect x="44" y="50" width="4" height="4" fill="#131e13"/><rect x="50" y="50" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="56" width="4" height="4" fill="#131e13"/><rect x="38" y="56" width="4" height="4" fill="#131e13"/><rect x="50" y="56" width="4" height="4" fill="#131e13"/><rect x="56" y="56" width="4" height="4" fill="#131e13"/>
+          </svg>
+        </div>
+        <div class="ticket-date-info">
+          <p><strong>Martes, 26 Mayo 2026</strong></p>
+          <p>Entrega: <strong>12:30 – 13:00</strong></p>
+          <p>Prep: <strong>25 min</strong></p>
+          <p style="font-size:11px;margin-top:3px;color:rgba(116,154,118,0.6);">Cocina A · #1042</p>
+        </div>
+      </div>
+      <div class="ticket-macros">
+        <div class="macro-cell" style="background:rgba(116,154,118,0.06);">
+          <p class="val" style="color:#131e13;">486</p>
+          <p class="lbl">kcal</p>
+        </div>
+        <div class="macro-cell" style="background:rgba(20,255,105,0.07);">
+          <p class="val" style="color:#16a34a;">42g</p>
+          <p class="lbl">Prot.</p>
+        </div>
+        <div class="macro-cell" style="background:rgba(245,158,11,0.07);">
+          <p class="val" style="color:#d97706;">48g</p>
+          <p class="lbl">Carbs</p>
+        </div>
+        <div class="macro-cell" style="background:rgba(249,115,22,0.06);">
+          <p class="val" style="color:#ea580c;">16g</p>
+          <p class="lbl">Grasas</p>
+        </div>
+      </div>
+      <div class="ticket-info">
+        <p class="ticket-info-label">Alérgenos</p>
+        <div class="allergen-row">
+          <span class="allergen-chip">Sin gluten ✓</span>
+          <span class="allergen-chip">Sin lácteos ✓</span>
+          <span class="allergen-chip">Sin nueces ✓</span>
+        </div>
+      </div>
+      <div class="ticket-info" style="border-bottom:none;padding-bottom:0;">
+        <p class="ticket-info-label">Notas</p>
+        <p class="ticket-notes">"Sin cebolla, extra brócoli, poco aceite"</p>
+      </div>
+      <div class="ticket-footer" style="margin-top:10px;">
+        <span>fuel.app · v2.6</span>
+        <span class="ts">09:02 · 26/05/26</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKET 2 — Almuerzo, sin notas -->
+  <div class="ticket-group">
+    <span class="ticket-label-tag">FUL-1043 · Almuerzo</span>
+    <div class="ticket">
+      <div class="ticket-stripe stripe-almuerzo"></div>
+      <div class="ticket-header">
+        <div class="ticket-logo-row">
+          <div class="ticket-logo"><span>⚡</span><span>Fuel</span></div>
+          <span class="ticket-code">FUL-1043</span>
+        </div>
+        <span class="ticket-meal-badge badge-almuerzo">Almuerzo</span>
+        <p class="ticket-menu-name">Salmón con Quinoa Verde</p>
+        <p class="ticket-client">Ana García</p>
+      </div>
+      <div class="ticket-qr-section">
+        <div class="qr-placeholder">
+          <svg viewBox="0 0 68 68" width="68" height="68" xmlns="http://www.w3.org/2000/svg">
+            <rect width="68" height="68" fill="white"/>
+            <rect x="4" y="4" width="18" height="18" rx="2" fill="#131e13"/>
+            <rect x="7" y="7" width="12" height="12" rx="1" fill="white"/>
+            <rect x="10" y="10" width="6" height="6" fill="#131e13"/>
+            <rect x="46" y="4" width="18" height="18" rx="2" fill="#131e13"/>
+            <rect x="49" y="7" width="12" height="12" rx="1" fill="white"/>
+            <rect x="52" y="10" width="6" height="6" fill="#131e13"/>
+            <rect x="4" y="46" width="18" height="18" rx="2" fill="#131e13"/>
+            <rect x="7" y="49" width="12" height="12" rx="1" fill="white"/>
+            <rect x="10" y="52" width="6" height="6" fill="#131e13"/>
+            <rect x="26" y="4" width="4" height="4" fill="#131e13"/><rect x="38" y="4" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="16" width="4" height="4" fill="#131e13"/><rect x="32" y="16" width="4" height="4" fill="#131e13"/>
+            <rect x="4" y="26" width="4" height="4" fill="#131e13"/><rect x="16" y="26" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="26" width="4" height="4" fill="#131e13"/><rect x="44" y="26" width="4" height="4" fill="#131e13"/><rect x="56" y="26" width="4" height="4" fill="#131e13"/>
+            <rect x="4" y="32" width="4" height="4" fill="#131e13"/><rect x="10" y="32" width="4" height="4" fill="#131e13"/>
+            <rect x="32" y="32" width="4" height="4" fill="#14ff69"/><rect x="44" y="32" width="4" height="4" fill="#131e13"/>
+            <rect x="10" y="38" width="4" height="4" fill="#131e13"/><rect x="22" y="38" width="4" height="4" fill="#131e13"/>
+            <rect x="36" y="38" width="4" height="4" fill="#131e13"/><rect x="50" y="38" width="4" height="4" fill="#131e13"/><rect x="56" y="38" width="4" height="4" fill="#131e13"/>
+            <rect x="28" y="44" width="4" height="4" fill="#131e13"/><rect x="40" y="44" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="50" width="4" height="4" fill="#131e13"/><rect x="34" y="50" width="4" height="4" fill="#131e13"/><rect x="48" y="50" width="4" height="4" fill="#131e13"/>
+            <rect x="28" y="56" width="4" height="4" fill="#131e13"/><rect x="42" y="56" width="4" height="4" fill="#131e13"/><rect x="54" y="56" width="4" height="4" fill="#131e13"/>
+          </svg>
+        </div>
+        <div class="ticket-date-info">
+          <p><strong>Martes, 26 Mayo 2026</strong></p>
+          <p>Entrega: <strong>12:30 – 13:00</strong></p>
+          <p>Prep: <strong>20 min</strong></p>
+          <p style="font-size:11px;margin-top:3px;color:rgba(116,154,118,0.6);">Cocina A · #1043</p>
+        </div>
+      </div>
+      <div class="ticket-macros">
+        <div class="macro-cell" style="background:rgba(116,154,118,0.06);">
+          <p class="val" style="color:#131e13;">520</p>
+          <p class="lbl">kcal</p>
+        </div>
+        <div class="macro-cell" style="background:rgba(20,255,105,0.07);">
+          <p class="val" style="color:#16a34a;">46g</p>
+          <p class="lbl">Prot.</p>
+        </div>
+        <div class="macro-cell" style="background:rgba(245,158,11,0.07);">
+          <p class="val" style="color:#d97706;">52g</p>
+          <p class="lbl">Carbs</p>
+        </div>
+        <div class="macro-cell" style="background:rgba(249,115,22,0.06);">
+          <p class="val" style="color:#ea580c;">18g</p>
+          <p class="lbl">Grasas</p>
+        </div>
+      </div>
+      <div class="ticket-info">
+        <p class="ticket-info-label">Alérgenos</p>
+        <div class="allergen-row">
+          <span class="allergen-chip" style="background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.25);color:#d97706;">⚠ Mariscos</span>
+          <span class="allergen-chip">Sin gluten ✓</span>
+        </div>
+      </div>
+      <div class="ticket-info" style="border-bottom:none;padding-bottom:0;">
+        <p class="ticket-info-label">Notas</p>
+        <p class="no-notes">Sin notas especiales</p>
+      </div>
+      <div class="ticket-footer" style="margin-top:10px;">
+        <span>fuel.app · v2.6</span>
+        <span class="ts">09:03 · 26/05/26</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKET 3 — Desayuno -->
+  <div class="ticket-group">
+    <span class="ticket-label-tag">FUL-1038 · Desayuno</span>
+    <div class="ticket">
+      <div class="ticket-stripe stripe-desayuno"></div>
+      <div class="ticket-header">
+        <div class="ticket-logo-row">
+          <div class="ticket-logo"><span>⚡</span><span>Fuel</span></div>
+          <span class="ticket-code">FUL-1038</span>
+        </div>
+        <span class="ticket-meal-badge badge-desayuno">Desayuno</span>
+        <p class="ticket-menu-name">Bowl Mediterráneo Matutino</p>
+        <p class="ticket-client">María Torres</p>
+      </div>
+      <div class="ticket-qr-section">
+        <div class="qr-placeholder">
+          <svg viewBox="0 0 68 68" width="68" height="68" xmlns="http://www.w3.org/2000/svg">
+            <rect width="68" height="68" fill="white"/>
+            <rect x="4" y="4" width="18" height="18" rx="2" fill="#131e13"/>
+            <rect x="7" y="7" width="12" height="12" rx="1" fill="white"/>
+            <rect x="10" y="10" width="6" height="6" fill="#131e13"/>
+            <rect x="46" y="4" width="18" height="18" rx="2" fill="#131e13"/>
+            <rect x="49" y="7" width="12" height="12" rx="1" fill="white"/>
+            <rect x="52" y="10" width="6" height="6" fill="#131e13"/>
+            <rect x="4" y="46" width="18" height="18" rx="2" fill="#131e13"/>
+            <rect x="7" y="49" width="12" height="12" rx="1" fill="white"/>
+            <rect x="10" y="52" width="6" height="6" fill="#131e13"/>
+            <rect x="30" y="4" width="4" height="4" fill="#131e13"/><rect x="36" y="4" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="10" width="4" height="4" fill="#131e13"/><rect x="36" y="10" width="4" height="4" fill="#131e13"/>
+            <rect x="28" y="16" width="4" height="4" fill="#131e13"/><rect x="40" y="16" width="4" height="4" fill="#131e13"/>
+            <rect x="4" y="28" width="4" height="4" fill="#131e13"/><rect x="14" y="28" width="4" height="4" fill="#131e13"/>
+            <rect x="28" y="28" width="4" height="4" fill="#f59e0b"/><rect x="42" y="28" width="4" height="4" fill="#131e13"/><rect x="54" y="28" width="4" height="4" fill="#131e13"/>
+            <rect x="6" y="34" width="4" height="4" fill="#131e13"/><rect x="18" y="34" width="4" height="4" fill="#131e13"/>
+            <rect x="30" y="34" width="4" height="4" fill="#131e13"/><rect x="46" y="34" width="4" height="4" fill="#131e13"/>
+            <rect x="8" y="40" width="4" height="4" fill="#131e13"/><rect x="20" y="40" width="4" height="4" fill="#131e13"/>
+            <rect x="34" y="40" width="4" height="4" fill="#131e13"/><rect x="52" y="40" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="46" width="4" height="4" fill="#131e13"/><rect x="38" y="46" width="4" height="4" fill="#131e13"/>
+            <rect x="28" y="52" width="4" height="4" fill="#131e13"/><rect x="44" y="52" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="58" width="4" height="4" fill="#131e13"/><rect x="36" y="58" width="4" height="4" fill="#131e13"/><rect x="52" y="58" width="4" height="4" fill="#131e13"/>
+          </svg>
+        </div>
+        <div class="ticket-date-info">
+          <p><strong>Martes, 26 Mayo 2026</strong></p>
+          <p>Entrega: <strong>07:30 – 08:00</strong></p>
+          <p>Prep: <strong>15 min</strong></p>
+          <p style="font-size:11px;margin-top:3px;color:rgba(116,154,118,0.6);">Cocina B · #1038</p>
+        </div>
+      </div>
+      <div class="ticket-macros">
+        <div class="macro-cell" style="background:rgba(116,154,118,0.06);">
+          <p class="val" style="color:#131e13;">380</p>
+          <p class="lbl">kcal</p>
+        </div>
+        <div class="macro-cell" style="background:rgba(20,255,105,0.07);">
+          <p class="val" style="color:#16a34a;">28g</p>
+          <p class="lbl">Prot.</p>
+        </div>
+        <div class="macro-cell" style="background:rgba(245,158,11,0.07);">
+          <p class="val" style="color:#d97706;">44g</p>
+          <p class="lbl">Carbs</p>
+        </div>
+        <div class="macro-cell" style="background:rgba(249,115,22,0.06);">
+          <p class="val" style="color:#ea580c;">12g</p>
+          <p class="lbl">Grasas</p>
+        </div>
+      </div>
+      <div class="ticket-info">
+        <p class="ticket-info-label">Alérgenos</p>
+        <div class="allergen-row">
+          <span class="allergen-chip" style="background:rgba(239,68,68,0.07);border-color:rgba(239,68,68,0.2);color:#dc2626;">⚠ Huevo</span>
+          <span class="allergen-chip" style="background:rgba(239,68,68,0.07);border-color:rgba(239,68,68,0.2);color:#dc2626;">⚠ Lácteos</span>
+        </div>
+      </div>
+      <div class="ticket-info" style="border-bottom:none;padding-bottom:0;">
+        <p class="ticket-info-label">Notas</p>
+        <p class="ticket-notes">"Yogur lactosa cero, sin huevo revuelto"</p>
+      </div>
+      <div class="ticket-footer" style="margin-top:10px;">
+        <span>fuel.app · v2.6</span>
+        <span class="ts">07:14 · 26/05/26</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKET 4 — Cena -->
+  <div class="ticket-group">
+    <span class="ticket-label-tag">FUL-1055 · Cena</span>
+    <div class="ticket">
+      <div class="ticket-stripe stripe-cena"></div>
+      <div class="ticket-header">
+        <div class="ticket-logo-row">
+          <div class="ticket-logo"><span>⚡</span><span>Fuel</span></div>
+          <span class="ticket-code">FUL-1055</span>
+        </div>
+        <span class="ticket-meal-badge badge-cena">Cena</span>
+        <p class="ticket-menu-name">Pechuga Rellena de Espinaca</p>
+        <p class="ticket-client">Luis Herrera</p>
+      </div>
+      <div class="ticket-qr-section">
+        <div class="qr-placeholder">
+          <svg viewBox="0 0 68 68" width="68" height="68" xmlns="http://www.w3.org/2000/svg">
+            <rect width="68" height="68" fill="white"/>
+            <rect x="4" y="4" width="18" height="18" rx="2" fill="#131e13"/>
+            <rect x="7" y="7" width="12" height="12" rx="1" fill="white"/>
+            <rect x="10" y="10" width="6" height="6" fill="#131e13"/>
+            <rect x="46" y="4" width="18" height="18" rx="2" fill="#131e13"/>
+            <rect x="49" y="7" width="12" height="12" rx="1" fill="white"/>
+            <rect x="52" y="10" width="6" height="6" fill="#131e13"/>
+            <rect x="4" y="46" width="18" height="18" rx="2" fill="#131e13"/>
+            <rect x="7" y="49" width="12" height="12" rx="1" fill="white"/>
+            <rect x="10" y="52" width="6" height="6" fill="#131e13"/>
+            <rect x="26" y="6" width="4" height="4" fill="#131e13"/><rect x="34" y="6" width="4" height="4" fill="#131e13"/>
+            <rect x="28" y="12" width="4" height="4" fill="#131e13"/><rect x="40" y="12" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="18" width="4" height="4" fill="#131e13"/><rect x="36" y="18" width="4" height="4" fill="#131e13"/>
+            <rect x="4" y="26" width="4" height="4" fill="#131e13"/><rect x="12" y="26" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="26" width="4" height="4" fill="#a78bfa"/><rect x="40" y="26" width="4" height="4" fill="#131e13"/><rect x="52" y="26" width="4" height="4" fill="#131e13"/>
+            <rect x="6" y="32" width="4" height="4" fill="#131e13"/>
+            <rect x="28" y="32" width="4" height="4" fill="#131e13"/><rect x="44" y="32" width="4" height="4" fill="#131e13"/><rect x="58" y="32" width="4" height="4" fill="#131e13"/>
+            <rect x="4" y="38" width="4" height="4" fill="#131e13"/><rect x="14" y="38" width="4" height="4" fill="#131e13"/>
+            <rect x="30" y="38" width="4" height="4" fill="#131e13"/><rect x="46" y="38" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="46" width="4" height="4" fill="#131e13"/><rect x="36" y="46" width="4" height="4" fill="#131e13"/>
+            <rect x="28" y="52" width="4" height="4" fill="#131e13"/><rect x="42" y="52" width="4" height="4" fill="#131e13"/><rect x="56" y="52" width="4" height="4" fill="#131e13"/>
+            <rect x="26" y="58" width="4" height="4" fill="#131e13"/><rect x="38" y="58" width="4" height="4" fill="#131e13"/>
+          </svg>
+        </div>
+        <div class="ticket-date-info">
+          <p><strong>Martes, 26 Mayo 2026</strong></p>
+          <p>Entrega: <strong>19:30 – 20:00</strong></p>
+          <p>Prep: <strong>30 min</strong></p>
+          <p style="font-size:11px;margin-top:3px;color:rgba(116,154,118,0.6);">Cocina A · #1055</p>
+        </div>
+      </div>
+      <div class="ticket-macros">
+        <div class="macro-cell" style="background:rgba(116,154,118,0.06);">
+          <p class="val" style="color:#131e13;">440</p>
+          <p class="lbl">kcal</p>
+        </div>
+        <div class="macro-cell" style="background:rgba(20,255,105,0.07);">
+          <p class="val" style="color:#16a34a;">52g</p>
+          <p class="lbl">Prot.</p>
+        </div>
+        <div class="macro-cell" style="background:rgba(245,158,11,0.07);">
+          <p class="val" style="color:#d97706;">28g</p>
+          <p class="lbl">Carbs</p>
+        </div>
+        <div class="macro-cell" style="background:rgba(249,115,22,0.06);">
+          <p class="val" style="color:#ea580c;">14g</p>
+          <p class="lbl">Grasas</p>
+        </div>
+      </div>
+      <div class="ticket-info">
+        <p class="ticket-info-label">Alérgenos</p>
+        <div class="allergen-row">
+          <span class="allergen-chip">Sin gluten ✓</span>
+          <span class="allergen-chip">Sin nueces ✓</span>
+          <span class="allergen-chip">Sin lácteos ✓</span>
+          <span class="allergen-chip">Sin mariscos ✓</span>
+        </div>
+      </div>
+      <div class="ticket-info" style="border-bottom:none;padding-bottom:0;">
+        <p class="ticket-info-label">Notas</p>
+        <p class="no-notes">Sin notas especiales</p>
+      </div>
+      <div class="ticket-footer" style="margin-top:10px;">
+        <span>fuel.app · v2.6</span>
+        <span class="ts">18:45 · 26/05/26</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end tickets-wrapper -->
+
+<!-- ── DEV PAGE NAV ── -->
+<div class="dev-nav" style="position:fixed;bottom:0;left:0;right:0;height:38px;background:rgba(6,13,6,0.92);backdrop-filter:blur(10px);border-top:1px solid rgba(20,255,105,0.12);z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 32px;">
+  <a href="../04_admin/04_order_detail.html" style="color:rgba(116,154,118,0.5);font-size:12.5px;text-decoration:none;" onmouseover="this.style.color='#749a76'" onmouseout="this.style.color='rgba(116,154,118,0.5)'">← Anterior</a>
+  <span style="color:rgba(116,154,118,0.3);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;">FASE 5 · TICKET · ETIQUETAS DE COMIDA</span>
+  <a href="../06_delivery/delivery_dashboard.html" style="color:rgba(20,255,105,0.6);font-size:12.5px;text-decoration:none;" onmouseover="this.style.color='#14ff69'" onmouseout="this.style.color='rgba(20,255,105,0.6)'">Siguiente →</a>
+</div>
+
+</body>
+</html>

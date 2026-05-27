@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Fuel Admin — Lista de Compras</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{electric:'#14ff69',sage:'#749a76',frost:'#f1fcf1',forest:'#131e13'},fontFamily:{sans:['Inter','sans-serif']}}}}</script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:#f1fcf1;margin:0;color:#131e13;}
+    .admin-card{background:#fff;border-radius:16px;border:1px solid rgba(19,30,19,0.07);box-shadow:0 1px 4px rgba(19,30,19,0.05);}
+    .section-title{color:#131e13;font-size:13px;font-weight:700;margin:0 0 14px;padding-bottom:10px;border-bottom:1.5px solid rgba(19,30,19,0.07);}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;border-left:2.5px solid transparent;text-decoration:none;cursor:pointer;transition:all 0.15s;color:#749a76;}
+    .nav-item:hover{background:rgba(116,154,118,0.1);color:#f1fcf1;}
+    .nav-item.active{border-left-color:#14ff69;background:rgba(20,255,105,0.08);color:#f1fcf1;}
+
+    /* Shopping list item */
+    .shop-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 16px; border-radius: 10px;
+      transition: background 0.12s; cursor: pointer;
+      border-bottom: 1px solid rgba(19,30,19,0.05);
+    }
+    .shop-item:last-child { border-bottom: none; }
+    .shop-item:hover { background: rgba(19,30,19,0.02); }
+    .shop-item.done { opacity: 0.45; }
+    .shop-item.done .item-name { text-decoration: line-through; color: #749a76; }
+
+    .check-box {
+      width: 22px; height: 22px; border-radius: 7px; flex-shrink: 0;
+      border: 2px solid rgba(19,30,19,0.18); background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; cursor: pointer;
+    }
+    .check-box.checked { background: #14ff69; border-color: #14ff69; }
+
+    /* Category header */
+    .cat-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px 10px; cursor: pointer; user-select: none;
+    }
+    .cat-header:hover { background: rgba(19,30,19,0.02); border-radius: 10px 10px 0 0; }
+    .cat-body { overflow: hidden; transition: max-height 0.25s ease; }
+
+    /* Priority tag */
+    .prio-urgent { background: rgba(239,68,68,0.1); color: #ef4444; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px; flex-shrink: 0; }
+    .prio-soon { background: rgba(245,158,11,0.1); color: #d97706; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px; flex-shrink: 0; }
+    .prio-ok { background: rgba(20,255,105,0.1); color: #0dcc55; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px; flex-shrink: 0; }
+
+    .item-qty { color: #749a76; font-size: 12px; font-weight: 600; flex-shrink: 0; min-width: 68px; text-align: right; }
+    .item-name { color: #131e13; font-size: 13.5px; font-weight: 500; flex: 1; }
+
+    /* Progress bar */
+    .progress-bar-track { height: 8px; background: rgba(19,30,19,0.08); border-radius: 999px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, rgba(20,255,105,0.6), #14ff69); border-radius: 999px; transition: width 0.4s ease; }
+  </style>
+</head>
+<body style="padding-bottom:50px;">
+
+<!-- ── SIDEBAR ── -->
+<div style="width:220px;background:#131e13;height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;padding:0 12px 24px;z-index:100;">
+  <!-- Logo -->
+  <div style="padding:22px 12px 20px;display:flex;align-items:center;gap:9px;border-bottom:1px solid rgba(116,154,118,0.1);">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="#14ff69"><path d="M13 2L3.5 13.5H9.5L8 22L20.5 10.5H14.5L13 2Z"/></svg>
+    <span style="color:#f1fcf1;font-size:18px;font-weight:800;letter-spacing:-0.3px;">Fuel</span>
+    <span style="color:rgba(116,154,118,0.5);font-size:10px;font-weight:600;margin-left:auto;letter-spacing:0.06em;">ADMIN</span>
+  </div>
+  <!-- Nav -->
+  <nav style="display:flex;flex-direction:column;gap:3px;padding-top:16px;flex:1;">
+    <a class="nav-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span style="font-size:13.5px;font-weight:500;">Dashboard</span></a>
+    <a class="nav-item" href="01_add_menu.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span style="font-size:13.5px;font-weight:500;">Menús</span></a>
+    <a class="nav-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span style="font-size:13.5px;font-weight:500;">Pedidos</span></a>
+    <a class="nav-item" href="03_kitchen_orders.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a7 7 0 017 7c0 4-3 6-3 9H8c0-3-3-5-3-9a7 7 0 017-7z"/><line x1="8" y1="22" x2="16" y2="22"/><line x1="9" y1="18" x2="15" y2="18"/></svg><span style="font-size:13.5px;font-weight:500;">Cocina</span></a>
+    <a class="nav-item active" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2h12l1 5H5L6 2z"/><path d="M5 7l1 13h12l1-13"/><path d="M9 11v5M12 11v5M15 11v5"/></svg><span style="font-size:13.5px;font-weight:600;">Compras</span></a>
+    <a class="nav-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span style="font-size:13.5px;font-weight:500;">Entregas</span></a>
+    <a class="nav-item" href="02_analytics.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span style="font-size:13.5px;font-weight:500;">Analíticas</span></a>
+    <a class="nav-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><span style="font-size:13.5px;font-weight:500;">Ajustes</span></a>
+  </nav>
+  <!-- User -->
+  <div style="border-top:1px solid rgba(116,154,118,0.1);padding-top:16px;display:flex;align-items:center;gap:10px;">
+    <div style="width:32px;height:32px;border-radius:50%;background:rgba(20,255,105,0.15);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#14ff69;flex-shrink:0;">MR</div>
+    <div style="min-width:0;"><p style="color:#f1fcf1;font-size:12.5px;font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Marco Ruiz</p><p style="color:#749a76;font-size:11px;margin:0;">Encargado de Compras</p></div>
+  </div>
+</div>
+
+<!-- ── TOP HEADER ── -->
+<div style="position:fixed;top:0;left:220px;right:0;height:58px;background:#fff;border-bottom:1px solid rgba(19,30,19,0.08);display:flex;align-items:center;justify-content:space-between;padding:0 32px;z-index:90;">
+  <div>
+    <h1 style="font-size:17px;font-weight:700;margin:0;color:#131e13;">Lista de Compras</h1>
+    <p style="font-size:11.5px;color:#749a76;margin:0;">Martes, 26 de mayo de 2026 · Basada en los pedidos del día</p>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button onclick="resetAll()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:transparent;border:1.5px solid rgba(19,30,19,0.15);border-radius:10px;cursor:pointer;color:#749a76;font-size:12.5px;font-weight:600;font-family:'Inter',sans-serif;transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(19,30,19,0.3)';this.style.color='#131e13'" onmouseout="this.style.borderColor='rgba(19,30,19,0.15)';this.style.color='#749a76'">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+      Reiniciar
+    </button>
+    <button onclick="window.print()" style="display:flex;align-items:center;gap:7px;padding:8px 16px;background:#131e13;border:none;border-radius:10px;cursor:pointer;color:#f1fcf1;font-size:12.5px;font-weight:600;font-family:'Inter',sans-serif;transition:all 0.15s;" onmouseover="this.style.background='#1e2f1e'" onmouseout="this.style.background='#131e13'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Imprimir Lista
+    </button>
+  </div>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<div style="margin-left:220px;padding:88px 32px 32px;">
+
+  <!-- Summary row -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;">
+    <div class="admin-card" style="padding:16px 20px;">
+      <p style="color:#749a76;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;margin:0 0 6px;">Total pedidos</p>
+      <p style="color:#131e13;font-size:26px;font-weight:800;margin:0;line-height:1;">34</p>
+      <p style="color:#749a76;font-size:11.5px;margin:4px 0 0;">hoy · 4 menús distintos</p>
+    </div>
+    <div class="admin-card" style="padding:16px 20px;">
+      <p style="color:#749a76;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;margin:0 0 6px;">Ítems en lista</p>
+      <p style="color:#131e13;font-size:26px;font-weight:800;margin:0;line-height:1;" id="total-count">22</p>
+      <p style="color:#749a76;font-size:11.5px;margin:4px 0 0;">ingredientes requeridos</p>
+    </div>
+    <div class="admin-card" style="padding:16px 20px;">
+      <p style="color:#749a76;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;margin:0 0 6px;">Conseguidos</p>
+      <p style="color:#14ff69;font-size:26px;font-weight:800;margin:0;line-height:1;" id="done-count">0</p>
+      <p style="color:#749a76;font-size:11.5px;margin:4px 0 0;"><span id="pct-done">0%</span> completado</p>
+    </div>
+    <div class="admin-card" style="padding:16px 20px;">
+      <p style="color:#749a76;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;margin:0 0 6px;">Pendientes</p>
+      <p style="color:#d97706;font-size:26px;font-weight:800;margin:0;line-height:1;" id="pending-count">22</p>
+      <p style="color:#749a76;font-size:11.5px;margin:4px 0 0;">por conseguir</p>
+    </div>
+  </div>
+
+  <!-- Progress bar full -->
+  <div class="admin-card" style="padding:18px 24px;margin-bottom:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <p style="font-size:13.5px;font-weight:700;margin:0;color:#131e13;">Progreso de compras</p>
+      <span id="progress-label" style="font-size:13px;font-weight:700;color:#14ff69;">0 / 22</span>
+    </div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="main-progress" style="width:0%;"></div>
+    </div>
+  </div>
+
+  <!-- ── SHOPPING LIST ── -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+
+    <!-- Column 1 -->
+    <div style="display:flex;flex-direction:column;gap:18px;">
+
+      <!-- Proteínas -->
+      <div class="admin-card" style="overflow:hidden;">
+        <div class="cat-header" onclick="toggleCat('proteinas')">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;background:rgba(239,68,68,0.08);border-radius:9px;display:flex;align-items:center;justify-content:center;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round"><path d="M3 11l5-5 4 4 5-7 4 4"/><path d="M21 21H3"/></svg>
+            </div>
+            <div>
+              <p style="font-size:13.5px;font-weight:700;margin:0;color:#131e13;">Proteínas</p>
+              <p class="cat-done-label" id="lbl-proteinas" style="font-size:11px;color:#749a76;margin:0;font-weight:500;">0 / 4 conseguidos</p>
+            </div>
+          </div>
+          <svg id="arrow-proteinas" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#749a76" stroke-width="2" stroke-linecap="round" style="transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="cat-body" id="body-proteinas" style="max-height:600px;">
+          <div style="border-top:1px solid rgba(19,30,19,0.06);">
+            <!-- items -->
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Pechuga de pollo (sin piel)</span>
+              <span class="prio-urgent">urgente</span>
+              <span class="item-qty">4.5 kg</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Filetes de salmón</span>
+              <span class="prio-urgent">urgente</span>
+              <span class="item-qty">2.0 kg</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Pechuga de pavo</span>
+              <span class="prio-soon">pronto</span>
+              <span class="item-qty">800 g</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Huevos frescos</span>
+              <span class="prio-soon">pronto</span>
+              <span class="item-qty">24 pzas</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Granos y cereales -->
+      <div class="admin-card" style="overflow:hidden;">
+        <div class="cat-header" onclick="toggleCat('granos')">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;background:rgba(245,158,11,0.08);border-radius:9px;display:flex;align-items:center;justify-content:center;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round"><path d="M12 2a9.96 9.96 0 00-2 .2C5.5 3.2 2 7.2 2 12a10 10 0 0020 0c0-4.8-3.5-8.8-8-9.8A9.96 9.96 0 0012 2z"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div>
+              <p style="font-size:13.5px;font-weight:700;margin:0;color:#131e13;">Granos y cereales</p>
+              <p class="cat-done-label" id="lbl-granos" style="font-size:11px;color:#749a76;margin:0;font-weight:500;">0 / 3 conseguidos</p>
+            </div>
+          </div>
+          <svg id="arrow-granos" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#749a76" stroke-width="2" stroke-linecap="round" style="transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="cat-body" id="body-granos" style="max-height:600px;">
+          <div style="border-top:1px solid rgba(19,30,19,0.06);">
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Quinoa blanca</span>
+              <span class="prio-urgent">urgente</span>
+              <span class="item-qty">1.5 kg</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Arroz integral</span>
+              <span class="prio-soon">pronto</span>
+              <span class="item-qty">1.2 kg</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Avena orgánica</span>
+              <span class="prio-ok">en stock</span>
+              <span class="item-qty">600 g</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lácteos -->
+      <div class="admin-card" style="overflow:hidden;">
+        <div class="cat-header" onclick="toggleCat('lacteos')">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;background:rgba(99,102,241,0.08);border-radius:9px;display:flex;align-items:center;justify-content:center;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round"><path d="M8 2h8l2 6H6L8 2z"/><path d="M6 8v13h12V8"/><path d="M9 12h6"/></svg>
+            </div>
+            <div>
+              <p style="font-size:13.5px;font-weight:700;margin:0;color:#131e13;">Lácteos y quesos</p>
+              <p class="cat-done-label" id="lbl-lacteos" style="font-size:11px;color:#749a76;margin:0;font-weight:500;">0 / 3 conseguidos</p>
+            </div>
+          </div>
+          <svg id="arrow-lacteos" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#749a76" stroke-width="2" stroke-linecap="round" style="transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="cat-body" id="body-lacteos" style="max-height:600px;">
+          <div style="border-top:1px solid rgba(19,30,19,0.06);">
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Yogur griego natural</span>
+              <span class="prio-soon">pronto</span>
+              <span class="item-qty">900 g</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Queso feta</span>
+              <span class="prio-soon">pronto</span>
+              <span class="item-qty">320 g</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Queso cottage</span>
+              <span class="prio-ok">en stock</span>
+              <span class="item-qty">400 g</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end col 1 -->
+
+    <!-- Column 2 -->
+    <div style="display:flex;flex-direction:column;gap:18px;">
+
+      <!-- Verduras y frescos -->
+      <div class="admin-card" style="overflow:hidden;">
+        <div class="cat-header" onclick="toggleCat('verduras')">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;background:rgba(20,255,105,0.08);border-radius:9px;display:flex;align-items:center;justify-content:center;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#14ff69" stroke-width="2" stroke-linecap="round"><path d="M12 22V12M12 12C12 6 7 2 2 2s4 7 10 10zM12 12c0-6 5-10 10-10s-4 7-10 10z"/></svg>
+            </div>
+            <div>
+              <p style="font-size:13.5px;font-weight:700;margin:0;color:#131e13;">Verduras y frescos</p>
+              <p class="cat-done-label" id="lbl-verduras" style="font-size:11px;color:#749a76;margin:0;font-weight:500;">0 / 8 conseguidos</p>
+            </div>
+          </div>
+          <svg id="arrow-verduras" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#749a76" stroke-width="2" stroke-linecap="round" style="transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="cat-body" id="body-verduras" style="max-height:600px;">
+          <div style="border-top:1px solid rgba(19,30,19,0.06);">
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Espinaca fresca</span>
+              <span class="prio-urgent">urgente</span>
+              <span class="item-qty">1.4 kg</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Brócoli</span>
+              <span class="prio-urgent">urgente</span>
+              <span class="item-qty">1.0 kg</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Tomate cherry</span>
+              <span class="prio-soon">pronto</span>
+              <span class="item-qty">600 g</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Pepino</span>
+              <span class="prio-soon">pronto</span>
+              <span class="item-qty">400 g</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Cebolla morada</span>
+              <span class="prio-ok">en stock</span>
+              <span class="item-qty">350 g</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Aguacate</span>
+              <span class="prio-soon">pronto</span>
+              <span class="item-qty">8 pzas</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Limón amarillo</span>
+              <span class="prio-ok">en stock</span>
+              <span class="item-qty">1.0 kg</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Ajo fresco</span>
+              <span class="prio-ok">en stock</span>
+              <span class="item-qty">150 g</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aceites y condimentos -->
+      <div class="admin-card" style="overflow:hidden;">
+        <div class="cat-header" onclick="toggleCat('condimentos')">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;background:rgba(245,158,11,0.08);border-radius:9px;display:flex;align-items:center;justify-content:center;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 11-4 0"/></svg>
+            </div>
+            <div>
+              <p style="font-size:13.5px;font-weight:700;margin:0;color:#131e13;">Aceites y condimentos</p>
+              <p class="cat-done-label" id="lbl-condimentos" style="font-size:11px;color:#749a76;margin:0;font-weight:500;">0 / 4 conseguidos</p>
+            </div>
+          </div>
+          <svg id="arrow-condimentos" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#749a76" stroke-width="2" stroke-linecap="round" style="transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="cat-body" id="body-condimentos" style="max-height:600px;">
+          <div style="border-top:1px solid rgba(19,30,19,0.06);">
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Aceite de oliva extra virgen</span>
+              <span class="prio-urgent">urgente</span>
+              <span class="item-qty">1.5 L</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Salsa de soya baja en sodio</span>
+              <span class="prio-soon">pronto</span>
+              <span class="item-qty">300 mL</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Aceitunas negras</span>
+              <span class="prio-soon">pronto</span>
+              <span class="item-qty">400 g</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Alcaparras</span>
+              <span class="prio-ok">en stock</span>
+              <span class="item-qty">150 g</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hierbas y especias -->
+      <div class="admin-card" style="overflow:hidden;">
+        <div class="cat-header" onclick="toggleCat('hierbas')">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;background:rgba(116,154,118,0.1);border-radius:9px;display:flex;align-items:center;justify-content:center;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#749a76" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4.5 8-11.8A8 8 0 0012 2a8 8 0 00-8 8.2C4 17.5 12 22 12 22z"/></svg>
+            </div>
+            <div>
+              <p style="font-size:13.5px;font-weight:700;margin:0;color:#131e13;">Hierbas frescas y especias</p>
+              <p class="cat-done-label" id="lbl-hierbas" style="font-size:11px;color:#749a76;margin:0;font-weight:500;">0 / 4 conseguidos</p>
+            </div>
+          </div>
+          <svg id="arrow-hierbas" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#749a76" stroke-width="2" stroke-linecap="round" style="transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="cat-body" id="body-hierbas" style="max-height:600px;">
+          <div style="border-top:1px solid rgba(19,30,19,0.06);">
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Cilantro fresco</span>
+              <span class="prio-urgent">urgente</span>
+              <span class="item-qty">2 manojos</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Perejil fresco</span>
+              <span class="prio-soon">pronto</span>
+              <span class="item-qty">2 manojos</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Albahaca fresca</span>
+              <span class="prio-soon">pronto</span>
+              <span class="item-qty">1 manojo</span>
+            </div>
+            <div class="shop-item" onclick="toggleItem(this)">
+              <div class="check-box"></div>
+              <span class="item-name">Jengibre fresco</span>
+              <span class="prio-ok">en stock</span>
+              <span class="item-qty">100 g</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end col 2 -->
+
+  </div><!-- end grid -->
+
+</div><!-- end main -->
+
+<!-- ── MENUS REFERENCE FOOTER ── -->
+<div style="margin-left:220px;padding:0 32px 60px;">
+  <div class="admin-card" style="padding:18px 24px;">
+    <p style="font-size:13px;font-weight:700;margin:0 0 14px;padding-bottom:10px;border-bottom:1.5px solid rgba(19,30,19,0.07);color:#131e13;">Menús del día · Referencia de ingredientes</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img src="../../assets/images/tazon-pollo.jpg" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0;" alt="Tazón Pollo">
+        <div><p style="font-size:12px;font-weight:600;margin:0 0 2px;color:#131e13;">Tazón Proteico de Pollo</p><p style="font-size:11px;color:#749a76;margin:0;">10 pedidos · Almuerzo</p></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img src="../../assets/images/salmon-quinoa.jpg" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0;" alt="Salmón Quinoa">
+        <div><p style="font-size:12px;font-weight:600;margin:0 0 2px;color:#131e13;">Salmón con Quinoa Verde</p><p style="font-size:11px;color:#749a76;margin:0;">8 pedidos · Almuerzo</p></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img src="../../assets/images/bowl-mediterraneo.jpg" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0;" alt="Bowl Mediterráneo">
+        <div><p style="font-size:12px;font-weight:600;margin:0 0 2px;color:#131e13;">Bowl Mediterráneo</p><p style="font-size:11px;color:#749a76;margin:0;">8 pedidos · Desayuno</p></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img src="../../assets/images/pechuga-espinaca.jpg" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0;" alt="Pechuga Espinaca">
+        <div><p style="font-size:12px;font-weight:600;margin:0 0 2px;color:#131e13;">Pechuga Rellena de Espinaca</p><p style="font-size:11px;color:#749a76;margin:0;">8 pedidos · Cena</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DEV PAGE NAV ── -->
+<div style="position:fixed;bottom:0;left:0;right:0;height:38px;background:rgba(6,13,6,0.92);backdrop-filter:blur(10px);border-top:1px solid rgba(20,255,105,0.12);z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 32px;">
+  <a href="04_order_detail.html" style="color:rgba(116,154,118,0.5);font-size:12.5px;text-decoration:none;" onmouseover="this.style.color='#749a76'" onmouseout="this.style.color='rgba(116,154,118,0.5)'">← Anterior</a>
+  <span style="color:rgba(116,154,118,0.3);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;">FASE 4 · ADMIN · 4.5 – LISTA DE COMPRAS</span>
+  <a href="../05_ticket/meal_ticket.html" style="color:rgba(20,255,105,0.6);font-size:12.5px;text-decoration:none;" onmouseover="this.style.color='#14ff69'" onmouseout="this.style.color='rgba(20,255,105,0.6)'">Siguiente →</a>
+</div>
+
+<script>
+  const TOTAL = 22;
+
+  // Category totals
+  const catTotals = {
+    proteinas: 4, granos: 3, lacteos: 3, verduras: 8, condimentos: 4, hierbas: 4
+  };
+
+  function toggleItem(el) {
+    el.classList.toggle('done');
+    const box = el.querySelector('.check-box');
+    box.classList.toggle('checked');
+    // Tick SVG
+    if (box.classList.contains('checked')) {
+      box.innerHTML = '<svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#131e13" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    } else {
+      box.innerHTML = '';
+    }
+    updateCounts();
+  }
+
+  function updateCounts() {
+    const doneItems = document.querySelectorAll('.shop-item.done').length;
+    const pending = TOTAL - doneItems;
+    const pct = Math.round((doneItems / TOTAL) * 100);
+
+    document.getElementById('done-count').textContent = doneItems;
+    document.getElementById('pending-count').textContent = pending;
+    document.getElementById('pct-done').textContent = pct + '%';
+    document.getElementById('progress-label').textContent = doneItems + ' / ' + TOTAL;
+    document.getElementById('main-progress').style.width = pct + '%';
+
+    // Per-category labels
+    ['proteinas','granos','lacteos','verduras','condimentos','hierbas'].forEach(cat => {
+      const bodyEl = document.getElementById('body-' + cat);
+      if (!bodyEl) return;
+      const catDone = bodyEl.querySelectorAll('.shop-item.done').length;
+      const catTotal = catTotals[cat];
+      document.getElementById('lbl-' + cat).textContent = catDone + ' / ' + catTotal + ' conseguidos';
+    });
+  }
+
+  function toggleCat(cat) {
+    const body = document.getElementById('body-' + cat);
+    const arrow = document.getElementById('arrow-' + cat);
+    if (body.style.maxHeight === '0px') {
+      body.style.maxHeight = '600px';
+      arrow.style.transform = 'rotate(0deg)';
+    } else {
+      body.style.maxHeight = '0px';
+      arrow.style.transform = 'rotate(-90deg)';
+    }
+  }
+
+  function resetAll() {
+    document.querySelectorAll('.shop-item').forEach(item => {
+      item.classList.remove('done');
+      const box = item.querySelector('.check-box');
+      box.classList.remove('checked');
+      box.innerHTML = '';
+    });
+    updateCounts();
+  }
+</script>
+
+</body>
+</html>
