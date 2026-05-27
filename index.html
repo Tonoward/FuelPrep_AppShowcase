@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FuelPrep App Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(ellipse 160% 60% at 50% -10%, #1a2e1c 0%, #060d06 65%);
+      color: #f1fcf1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+    }
+    .container {
+      width: min(720px, 100%);
+      padding: 32px;
+      border-radius: 24px;
+      background: rgba(19, 30, 19, 0.88);
+      border: 1px solid rgba(116, 154, 118, 0.2);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    p {
+      margin: 0 0 28px;
+      color: rgba(241, 252, 241, 0.72);
+      line-height: 1.6;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 14px;
+    }
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      text-decoration: none;
+      color: #f1fcf1;
+      background: rgba(116, 154, 118, 0.08);
+      border: 1px solid rgba(116, 154, 118, 0.18);
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+    a:hover {
+      transform: translateY(-2px);
+      border-color: rgba(20, 255, 105, 0.45);
+      background: rgba(20, 255, 105, 0.12);
+    }
+    .label {
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .path {
+      font-size: 13px;
+      color: rgba(116, 154, 118, 0.95);
+    }
+    .arrow {
+      color: #14ff69;
+      font-size: 22px;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>FuelPrep App Showcase</h1>
+    <p>Select the first screen for each flow in the <code>/screens</code> directory.</p>
+    <ul>
+      <li>
+        <a href="screens/01_onboarding/01_name.html">
+          <span>
+            <span class="label">Onboarding</span><br>
+            <span class="path">screens/01_onboarding/01_name.html</span>
+          </span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+      <li>
+        <a href="screens/02_main_app/01_home_menu.html">
+          <span>
+            <span class="label">Main App</span><br>
+            <span class="path">screens/02_main_app/01_home_menu.html</span>
+          </span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+      <li>
+        <a href="screens/03_schedule/01_monthly_calendar.html">
+          <span>
+            <span class="label">Schedule</span><br>
+            <span class="path">screens/03_schedule/01_monthly_calendar.html</span>
+          </span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+      <li>
+        <a href="screens/04_admin/01_add_menu.html">
+          <span>
+            <span class="label">Admin</span><br>
+            <span class="path">screens/04_admin/01_add_menu.html</span>
+          </span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+      <li>
+        <a href="screens/05_ticket/meal_ticket.html">
+          <span>
+            <span class="label">Ticket</span><br>
+            <span class="path">screens/05_ticket/meal_ticket.html</span>
+          </span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+      <li>
+        <a href="screens/06_delivery/delivery_dashboard.html">
+          <span>
+            <span class="label">Delivery</span><br>
+            <span class="path">screens/06_delivery/delivery_dashboard.html</span>
+          </span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+    </ul>
+  </main>
+</body>
+</html>
